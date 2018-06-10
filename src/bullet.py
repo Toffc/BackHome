@@ -38,5 +38,13 @@ class Bullet(pygame.sprite.Sprite):
         self.rect.left, self.rect.top = position
         self.active = True
 
+    def changeSpeed(self, speed):
+        self.speed = speed 
+
+class Bullet_1(Bullet):
+
+    def __init__(self, position):
+        super().__init__(position)
+        self.image = pygame.image.load('material/image/bullet2.png')
 
 

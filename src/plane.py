@@ -13,6 +13,8 @@ from config.settings import BASE_DIR
 import os
 # 倒入精灵模块, 使飞机可以动起来
 import pygame
+from src.bullet import Bullet
+from src.bullet import Bullet_1
 
 
 class OurPlane(pygame.sprite.Sprite):
@@ -32,6 +34,9 @@ class OurPlane(pygame.sprite.Sprite):
         self.rect.left, self.rect.top = (self.width - self.rect.width) // 2, (self.height - self.rect.height - 10)
         # 设置飞机移动速度
         self.speed = 10
+        #设置飞机的能量值
+        self.energy = 10
+        self.bullet = Bullet(self.rect.midtop)
         # 设置飞机存活状态(True为存活, False为死亡)
         self.active = True
         # 加载飞机损毁图片

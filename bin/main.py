@@ -93,9 +93,9 @@ def main():
 
     # 定义子弹实例化个数
     bullet1 = []
-    bullet_num = 6
+    bullet_num = 1
     for i in range(bullet_num):
-        bullet1.append(Bullet(our_plane.rect.midtop))
+        bullet1.append(our_plane.bullet)
 
     while running:
 
@@ -201,7 +201,7 @@ def main():
                 screen.blit(our_plane.image_two, our_plane.rect)
 
             # 飞机存活的状态下才可以发射子弹
-            if not (delay % 10):  # 每十帧发射一颗移动的子弹
+            if not (delay % 20):  # 每十帧发射一颗移动的子弹
                 bullet_sound.play()
                 bullets = bullet1
                 bullets[bullet_index].reset(our_plane.rect.midtop)
