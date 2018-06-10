@@ -36,6 +36,8 @@ class OurPlane(pygame.sprite.Sprite):
         self.speed = 10
         #设置飞机的能量值
         self.energy = 50
+        #设置飞机的生命数
+        self.life = 3
         #设置飞机的子弹
         self.bullet = Bullet(self.rect.midtop)
         # 设置飞机存活状态(True为存活, False为死亡)
@@ -99,6 +101,11 @@ class OurPlane(pygame.sprite.Sprite):
         if self.energy > 50:
             self.energy = 50
         if self.energy <= 0:
-            self.energy = 0  
+            self.energy = 0 
+
+    def change_life(self, change):
+        self.life += 1
+        if self.life <= 0:
+            self.life = 0      
 
 

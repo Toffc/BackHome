@@ -215,23 +215,23 @@ def main():
                     if enemies_hit:  # 如果子弹击中飞机
                         b.active = False  # 子弹损毁
                         for e in enemies_hit:
-                            e.active = e.reduce_energy()  # 小型敌机损毁
-
-        # 毁坏状态绘制爆炸的场面
-        else:
-            if not (delay % 3):
-                screen.blit(our_plane.destroy_images[me_destroy_index], our_plane.rect)
-                me_destroy_index = (me_destroy_index + 1) % 4
-                if me_destroy_index == 0:
-                    me_down_sound.play()
-                    our_plane.reset()
+                            e.active = e.reduce_energy()  # 敌机能量减少
 
         # 调用 pygame 实现的碰撞方法 spritecollide (我方飞机如果和敌机碰撞, 更改飞机的存活属性)
         enemies_down = pygame.sprite.spritecollide(our_plane, enemies, False, pygame.sprite.collide_mask)
         if enemies_down:
-            our_plane.active = False
-            for row in enemies:
-                row.active = False
+            our_plane.change_life(-1)
+            for e in enemies_down:
+                e.active = e.reduce_energy()  # 敌机能量减少
+
+            # 毁坏状态绘制爆炸的场面
+            for i in range(4):
+                if not (delay % 4):
+                    screen.blit(our_plane.destroy_images[me_destroy_index], our_plane.rect)
+                    me_destroy_index = (me_destroy_index + 1) % 4
+                    if me_destroy_index == 0:
+                        me_down_sound.play()
+                        our_plane.reset()
 
         # 响应用户的操作
         for event in pygame.event.get():
