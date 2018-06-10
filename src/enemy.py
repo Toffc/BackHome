@@ -115,7 +115,7 @@ class MidEnemy(pygame.sprite.Sprite):
         self.rect.left, self.rect.top = (
             randint(10, self.width - self.rect.width), randint(-5 * self.rect.height, 0))
         self.active = True
-        self.energy = 50
+        self.energy = 5
 
     def reduce_energy(self):
         self.energy = self.energy - 1
@@ -126,7 +126,7 @@ class MidEnemy(pygame.sprite.Sprite):
 
 class BigEnemy(pygame.sprite.Sprite):
 
-    energy = 1000
+    energy = 10
 
     def __init__(self, bg_size):
         super(BigEnemy, self).__init__()
@@ -134,7 +134,7 @@ class BigEnemy(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.width, self.height = bg_size[0], bg_size[1]
         self.mask = pygame.mask.from_surface(self.image)  # 获取飞机图像的掩膜用以更加精确的碰撞检测
-        self.speed = 3
+        self.speed = 1
         self.energy = BigEnemy.energy
         # 定义敌机出现的位置, 保证敌机不会在程序已开始就立即出现
         self.rect.left, self.rect.top = (
@@ -174,7 +174,7 @@ class BigEnemy(pygame.sprite.Sprite):
         self.rect.left, self.rect.top = (
             randint(10, self.width - self.rect.width), randint(-5 * self.rect.height, 0))
         self.active = True
-        self.energy = 1000
+        self.energy = 10
 
     def reduce_energy(self):
         self.energy = self.energy - 1
