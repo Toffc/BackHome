@@ -5,11 +5,28 @@ import os
 import pygame
 
 
+
+class Settings():
+    def __init__(self):
+
+        pygame.init()  # 游戏初始化
+              
+        self.bg_size = 1080, 600  # 初始化游戏背景大小(宽, 高)
+        self.screen = pygame.display.set_mode(self.bg_size)  # 设置背景对话框
+        pygame.display.set_caption("飞机大战")  # 设置标题
+        self.background = pygame.image.load(os.path.join(
+            BASE_DIR, "material/image/background.png"))  # 加载背景图片,并设置为不透明
+        
+        # 血槽颜色绘制
+        self.color_black = (0, 0, 0)
+        self.color_green = (0, 255, 0)
+        self.color_red = (255, 0, 0)
+        self.color_white = (255, 255, 255)
+        self.bg_color = (200, 200, 200)
+
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-pygame.init()  # 游戏初始化
 pygame.mixer.init()  # 混音器初始化
-
 # 游戏背景音乐
 pygame.mixer.music.load(os.path.join(BASE_DIR, "material/sound/game_music.wav"))
 pygame.mixer.music.set_volume(0.2)

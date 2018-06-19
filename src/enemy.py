@@ -182,3 +182,45 @@ class BigEnemy(pygame.sprite.Sprite):
             return False
         else:
             return True
+
+
+def add_small_enemies(group1, group2, num, bg_size):
+    """
+    添加小型敌机
+    指定个敌机对象添加到精灵组（sprite.group）
+    参数group1、group2是两个精灵组类型的形参，用以存储多个精灵对象（敌机）。
+    需要注意的一点是group既然是特定的精灵组结构体，在向其内部添加精灵对象时需要调用其对应的成员函数add()
+    :return:
+    """
+    for i in range(num):
+        small_enemy = SmallEnemy(bg_size)
+        group1.add(small_enemy)
+        group2.add(small_enemy)
+
+
+def add_mid_enemies(group1, group2, num, bg_size):
+    """
+    添加中型敌机
+    指定个敌机对象添加到精灵组（sprite.group）
+    参数group1、group2是两个精灵组类型的形参，用以存储多个精灵对象（敌机）。
+    需要注意的一点是group既然是特定的精灵组结构体，在向其内部添加精灵对象时需要调用其对应的成员函数add()
+    :return:
+    """
+    for i in range(num):
+        mid_enemy = MidEnemy(bg_size)
+        group1.add(mid_enemy)
+        group2.add(mid_enemy)
+
+
+def add_big_enemies(group1, group2, num, bg_size):
+    """
+    添加大型敌机
+    指定个敌机对象添加到精灵组（sprite.group）
+    参数group1、group2是两个精灵组类型的形参，用以存储多个精灵对象（敌机）。
+    需要注意的一点是group既然是特定的精灵组结构体，在向其内部添加精灵对象时需要调用其对应的成员函数add()
+    :return:
+    """
+    for i in range(num):
+        big_enemy = BigEnemy(bg_size)
+        group1.add(big_enemy)
+        group2.add(big_enemy)

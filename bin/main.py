@@ -2,73 +2,22 @@
 # -*- coding: utf-8 -*-
 
 import sys
+import pygame
 from pygame.locals import *
 from config.settings import *
 from src.plane import OurPlane  # 导入我们的飞机
 from src.enemy import *
+from src.game_stats import *
+from src.scoreboard import *
 from src.bullet import Bullet
 
 
-bg_size = 1080, 600  # 初始化游戏背景大小(宽, 高)
-screen = pygame.display.set_mode(bg_size)  # 设置背景对话框
-pygame.display.set_caption("飞机大战")  # 设置标题
-
-background = pygame.image.load(os.path.join(BASE_DIR, "material/image/background.png"))  # 加载背景图片,并设置为不透明
-
-
-# 血槽颜色绘制
-color_black = (0, 0, 0)
-color_green = (0, 255, 0)
-color_red = (255, 0, 0)
-color_white = (255, 255, 255)
-
-# 获取我方飞机
-our_plane = OurPlane(bg_size)
-
-
-def add_small_enemies(group1, group2, num):
-    """
-    添加小型敌机
-    指定个敌机对象添加到精灵组（sprite.group）
-    参数group1、group2是两个精灵组类型的形参，用以存储多个精灵对象（敌机）。
-    需要注意的一点是group既然是特定的精灵组结构体，在向其内部添加精灵对象时需要调用其对应的成员函数add()
-    :return:
-    """
-    for i in range(num):
-        small_enemy = SmallEnemy(bg_size)
-        group1.add(small_enemy)
-        group2.add(small_enemy)
-
-
-def add_mid_enemies(group1, group2, num):
-    """
-    添加中型敌机
-    指定个敌机对象添加到精灵组（sprite.group）
-    参数group1、group2是两个精灵组类型的形参，用以存储多个精灵对象（敌机）。
-    需要注意的一点是group既然是特定的精灵组结构体，在向其内部添加精灵对象时需要调用其对应的成员函数add()
-    :return:
-    """
-    for i in range(num):
-        mid_enemy = MidEnemy(bg_size)
-        group1.add(mid_enemy)
-        group2.add(mid_enemy)
-
-
-def add_big_enemies(group1, group2, num):
-    """
-    添加大型敌机
-    指定个敌机对象添加到精灵组（sprite.group）
-    参数group1、group2是两个精灵组类型的形参，用以存储多个精灵对象（敌机）。
-    需要注意的一点是group既然是特定的精灵组结构体，在向其内部添加精灵对象时需要调用其对应的成员函数add()
-    :return:
-    """
-    for i in range(num):
-        big_enemy = BigEnemy(bg_size)
-        group1.add(big_enemy)
-        group2.add(big_enemy)
-
-
 def main():
+    ai_settings = Settings()
+    stats = GameStats(ai_settings)
+    sb = Scoreboard(ai_settings, stats)
+    # 获取我方飞机
+    our_plane = OurPlane(ai_settings.bg_size)
     # 响应音乐
     pygame.mixer.music.play(-1)  # loops 接收该参数, -1 表示无限循环(默认循环播放一次)
     running = True
@@ -80,9 +29,10 @@ def main():
     mid_enemies = pygame.sprite.Group()  # 敌方中型飞机组(不同型号敌机创建不同的精灵组来存储)
     big_enemies = pygame.sprite.Group()  # 敌方大型飞机组(不同型号敌机创建不同的精灵组来存储)
 
-    add_small_enemies(small_enemies, enemies, 6)  # 生成若干敌方小型飞机
-    add_mid_enemies(mid_enemies, enemies, 3)  # 生成若干敌方小型飞机
-    add_big_enemies(big_enemies, enemies, 2)  # 生成若干敌方小型飞机
+    add_small_enemies(small_enemies, enemies, 6,
+                      ai_settings.bg_size)  # 生成若干敌方小型飞机
+    add_mid_enemies(mid_enemies, enemies, 3, ai_settings.bg_size)  # 生成若干敌方小型飞机
+    add_big_enemies(big_enemies, enemies, 2, ai_settings.bg_size)  # 生成若干敌方小型飞机
 
     # 定义子弹, 各种敌机和我方敌机的毁坏图像索引
     bullet_index = 0
@@ -100,7 +50,8 @@ def main():
     while running:
 
         # 绘制背景图
-        screen.blit(background, (0, 0))
+        ai_settings.screen.blit(ai_settings.background, (0, 0))
+        sb.show_score()
 
         # 微信的飞机貌似是喷气式的, 那么这个就涉及到一个帧数的问题
         clock = pygame.time.Clock()
@@ -114,25 +65,26 @@ def main():
             if each.active:
                 # 随机循环输出小飞机敌机
                 each.move()
-                screen.blit(each.image, each.rect)
+                ai_settings.screen.blit(each.image, each.rect)
 
-                pygame.draw.line(screen, color_black,
+                pygame.draw.line(ai_settings.screen, ai_settings.color_black,
                                  (each.rect.left, each.rect.top - 5),
                                  (each.rect.right, each.rect.top - 5),
                                  2)
                 energy_remain = each.energy / SmallEnemy.energy
                 if energy_remain > 0.2:  # 如果血量大约百分之二十则为绿色，否则为红色
-                    energy_color = color_green
+                    energy_color = ai_settings.color_green
                 else:
-                    energy_color = color_red
-                pygame.draw.line(screen, energy_color,
+                    energy_color = ai_settings.color_red
+                pygame.draw.line(ai_settings.screen, energy_color,
                                  (each.rect.left, each.rect.top - 5),
                                  (each.rect.left + each.rect.width * energy_remain, each.rect.top - 5),
                                  2)
             else:
                 if e1_destroy_index == 0:
                     enemy1_down_sound.play()
-                screen.blit(each.destroy_images[e1_destroy_index], each.rect)
+                ai_settings.screen.blit(
+                    each.destroy_images[e1_destroy_index], each.rect)
                 e1_destroy_index = (e1_destroy_index + 1) % 4
                 if e1_destroy_index == 0:
                     each.reset()
@@ -141,18 +93,18 @@ def main():
             if each.active:
                 # 随机循环输出小飞机敌机
                 each.move()
-                screen.blit(each.image, each.rect)
+                ai_settings.screen.blit(each.image, each.rect)
 
-                pygame.draw.line(screen, color_black,
+                pygame.draw.line(ai_settings.screen, ai_settings.color_black,
                                  (each.rect.left, each.rect.top - 5),
                                  (each.rect.right, each.rect.top - 5),
                                  2)
                 energy_remain = each.energy / MidEnemy.energy
                 if energy_remain > 0.2:  # 如果血量大约百分之二十则为绿色，否则为红色
-                    energy_color = color_green
+                    energy_color = ai_settings.color_green
                 else:
-                    energy_color = color_red
-                pygame.draw.line(screen, energy_color,
+                    energy_color = ai_settings.color_red
+                pygame.draw.line(ai_settings.screen, energy_color,
                                  (each.rect.left, each.rect.top - 5),
                                  (each.rect.left + each.rect.width *
                                   energy_remain, each.rect.top - 5),
@@ -160,7 +112,8 @@ def main():
             else:
                 if e2_destroy_index == 0:
                     enemy2_down_sound.play()
-                screen.blit(each.destroy_images[e2_destroy_index], each.rect)
+                ai_settings.screen.blit(
+                    each.destroy_images[e2_destroy_index], each.rect)
                 e2_destroy_index = (e2_destroy_index + 1) % 2
                 if e2_destroy_index == 0:
                     each.reset()
@@ -169,18 +122,18 @@ def main():
             if each.active:
                 # 随机循环输出小飞机敌机
                 each.move()
-                screen.blit(each.image, each.rect)
+                ai_settings.screen.blit(each.image, each.rect)
 
-                pygame.draw.line(screen, color_black,
+                pygame.draw.line(ai_settings.screen, ai_settings.color_black,
                                  (each.rect.left, each.rect.top - 5),
                                  (each.rect.right, each.rect.top - 5),
                                  2)
                 energy_remain = each.energy / BigEnemy.energy
                 if energy_remain > 0.2:  # 如果血量大约百分之二十则为绿色，否则为红色
-                    energy_color = color_green
+                    energy_color = ai_settings.color_green
                 else:
-                    energy_color = color_red
-                pygame.draw.line(screen, energy_color,
+                    energy_color = ai_settings.color_red
+                pygame.draw.line(ai_settings.screen, energy_color,
                                  (each.rect.left, each.rect.top - 5),
                                  (each.rect.left + each.rect.width *
                                   energy_remain, each.rect.top - 5),
@@ -188,7 +141,8 @@ def main():
             else:
                 if e3_destroy_index == 0:
                     enemy3_down_sound.play()
-                screen.blit(each.destroy_images[e3_destroy_index], each.rect)
+                ai_settings.screen.blit(
+                    each.destroy_images[e3_destroy_index], each.rect)
                 e3_destroy_index = (e3_destroy_index + 1) % 1
                 if e3_destroy_index == 0:
                     each.reset()
@@ -196,9 +150,9 @@ def main():
         # 当我方飞机存活状态, 正常展示
         if our_plane.active:
             if switch_image:
-                screen.blit(our_plane.image_one, our_plane.rect)
+                ai_settings.screen.blit(our_plane.image_one, our_plane.rect)
             else:
-                screen.blit(our_plane.image_two, our_plane.rect)
+                ai_settings.screen.blit(our_plane.image_two, our_plane.rect)
 
             # 飞机存活的状态下才可以发射子弹
             if not (delay % 10):  # 每十帧发射一颗移动的子弹
@@ -210,7 +164,7 @@ def main():
             for b in bullets:
                 if b.active:  # 只有激活的子弹才可能击中敌机
                     b.move()
-                    screen.blit(b.image, b.rect)
+                    ai_settings.screen.blit(b.image, b.rect)
                     enemies_hit = pygame.sprite.spritecollide(b, enemies, False, pygame.sprite.collide_mask)
                     if enemies_hit:  # 如果子弹击中飞机
                         b.active = False  # 子弹损毁
@@ -220,7 +174,8 @@ def main():
         # 毁坏状态绘制爆炸的场面
         else:
             if not (delay % 3):
-                screen.blit(our_plane.destroy_images[me_destroy_index], our_plane.rect)
+                ai_settings.screen.blit(
+                    our_plane.destroy_images[me_destroy_index], our_plane.rect)
                 me_destroy_index = (me_destroy_index + 1) % 4
                 if me_destroy_index == 0:
                     me_down_sound.play()
