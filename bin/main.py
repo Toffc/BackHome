@@ -53,6 +53,7 @@ def main():
         # 绘制背景图
         ai_settings.screen.blit(ai_settings.background, (0, 0))
         sb.show_score()
+        sb.show_life()
 
         # 微信的飞机貌似是喷气式的, 那么这个就涉及到一个帧数的问题
         clock = pygame.time.Clock()
@@ -179,13 +180,14 @@ def main():
 
         # 毁坏状态绘制爆炸的场面
         else:
-            if not (delay % 3):
+            me_down_sound.play()
+            for i in range(4):
+                time.sleep(0.02)
                 ai_settings.screen.blit(
-                    our_plane.destroy_images[me_destroy_index], our_plane.rect)
-                me_destroy_index = (me_destroy_index + 1) % 4
-                if me_destroy_index == 0:
-                    me_down_sound.play()
-                    our_plane.reset()
+                    our_plane.destroy_images[i], our_plane.rect)
+            stats.sub_life()
+            sb.prep_life()    
+            our_plane.reset()
 
         # 调用 pygame 实现的碰撞方法 spritecollide (我方飞机如果和敌机碰撞, 更改飞机的存活属性)
         enemies_down = pygame.sprite.spritecollide(our_plane, enemies, False, pygame.sprite.collide_mask)

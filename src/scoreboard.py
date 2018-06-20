@@ -12,10 +12,12 @@ class Scoreboard():
         self.font = pygame.font.SysFont(None, 48)
 
         self.prep_score()
+        self.prep_life()
 
     
     def prep_score(self):
         score_str = str(self.stats.score)
+        score_str = "score:" + score_str
         self.score_image = self.font.render(score_str, True, self.text_color, self.ai_settings.bg_color)
 
         self.score_rect = self.score_image.get_rect()
@@ -24,3 +26,15 @@ class Scoreboard():
 
     def show_score(self):
         self.screen.blit(self.score_image, self.score_rect)
+
+    def prep_life(self):
+        life_str = str(self.stats.life)
+        life_str = "life:" + life_str
+        self.life_image = self.font.render(life_str, True, self.text_color, self.ai_settings.bg_color)
+
+        self.life_rect = self.life_image.get_rect()
+        self.life_rect.right = self.screen_rect.right - 40
+        self.life_rect.top = 540
+
+    def show_life(self):
+        self.screen.blit(self.life_image, self.life_rect)
