@@ -3,6 +3,7 @@
 
 import sys
 import pygame
+import time 
 from pygame.locals import *
 from config.settings import *
 from src.plane import OurPlane  # 导入我们的飞机
@@ -81,17 +82,18 @@ def main():
                                  (each.rect.left + each.rect.width * energy_remain, each.rect.top - 5),
                                  2)
             else:
-                if e1_destroy_index == 0:
-                    enemy1_down_sound.play()
-                ai_settings.screen.blit(
-                    each.destroy_images[e1_destroy_index], each.rect)
-                e1_destroy_index = (e1_destroy_index + 1) % 4
-                if e1_destroy_index == 0:
-                    each.reset()
+                enemy1_down_sound.play()
+                stats.add_score(50)
+                sb.prep_score()
+                for i in range(4):
+                    time.sleep(0.02)
+                    ai_settings.screen.blit(
+                        each.destroy_images[i], each.rect)
+                each.reset()
 
         for each in mid_enemies:
             if each.active:
-                # 随机循环输出小飞机敌机
+                # 随机循环输出中飞机敌机
                 each.move()
                 ai_settings.screen.blit(each.image, each.rect)
 
@@ -110,17 +112,18 @@ def main():
                                   energy_remain, each.rect.top - 5),
                                  2)
             else:
-                if e2_destroy_index == 0:
-                    enemy2_down_sound.play()
-                ai_settings.screen.blit(
-                    each.destroy_images[e2_destroy_index], each.rect)
-                e2_destroy_index = (e2_destroy_index + 1) % 2
-                if e2_destroy_index == 0:
-                    each.reset()
+                enemy2_down_sound.play()
+                stats.add_score(100)
+                sb.prep_score()
+                for i in range(5):
+                    time.sleep(0.02)
+                    ai_settings.screen.blit(
+                        each.destroy_images[i], each.rect)
+                each.reset()
 
         for each in big_enemies:
             if each.active:
-                # 随机循环输出小飞机敌机
+                # 随机循环输出大飞机敌机
                 each.move()
                 ai_settings.screen.blit(each.image, each.rect)
 
@@ -141,11 +144,14 @@ def main():
             else:
                 if e3_destroy_index == 0:
                     enemy3_down_sound.play()
-                ai_settings.screen.blit(
-                    each.destroy_images[e3_destroy_index], each.rect)
-                e3_destroy_index = (e3_destroy_index + 1) % 1
-                if e3_destroy_index == 0:
-                    each.reset()
+                #更新得分
+                stats.add_score(200)
+                sb.prep_score()
+                for i in range(7):
+                    time.sleep(0.02)
+                    ai_settings.screen.blit(
+                        each.destroy_images[i], each.rect)
+                each.reset()
 
         # 当我方飞机存活状态, 正常展示
         if our_plane.active:
@@ -185,7 +191,7 @@ def main():
         enemies_down = pygame.sprite.spritecollide(our_plane, enemies, False, pygame.sprite.collide_mask)
         if enemies_down:
             our_plane.active = False
-            for row in enemies:
+            for row in enemies_down:
                 row.active = False
 
         # 响应用户的操作
