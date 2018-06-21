@@ -41,16 +41,12 @@ def main():
     # 定义子弹, 各种敌机和我方敌机的毁坏图像索引
     bullet_index = 0
     bullet_index_enemy = 0
-    e1_destroy_index = 0
-    e2_destroy_index = 0
-    e3_destroy_index = 0
-    me_destroy_index = 0
 
     # 定义子弹实例化个数
     bullet1 = []
     bullet_num = 1
     for i in range(bullet_num):
-        bullet1.append(Bullet(our_plane.rect.midtop))
+        bullet1.append(our_plane.bullet)
 
     #敌机的子弹
     bullet2 = []
@@ -164,8 +160,7 @@ def main():
                                   energy_remain, each.rect.top - 5),
                                  2)
             else:
-                if e3_destroy_index == 0:
-                    enemy3_down_sound.play()
+                enemy3_down_sound.play()
                 #更新得分
                 stats.add_score(200)
                 sb.prep_score()
@@ -241,12 +236,11 @@ def main():
             for row in enemies_down:
                 row.active = False
                 
-        # 调用 pygame 实现的碰撞方法 spritecollide (我方飞机如果和子弹碰撞, 更改飞机的存活属性)
-        hit = pygame.sprite.spritecollide(our_plane, bullet2, False, pygame.sprite.collide_mask)
-        if hit:  # 如果子弹击中飞机
-            our_plane.active = False  # 子弹损毁
-            for b in hit:
-                b.active = False  # 飞机损毁
+        for b in bullet2:
+            hit = pygame.sprite.spritecollide(b, our_plane, False, pygame.sprite.collide_mask)
+            if hit:  # 如果子弹击中飞机
+                b.active = False  # 子弹损毁
+                our_plane.active = False  # 飞机损毁
 
         # 响应用户的操作
         for event in pygame.event.get():
