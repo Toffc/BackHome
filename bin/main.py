@@ -59,13 +59,13 @@ def main():
     big_bullet_num = 1 
     for small in small_enemies:
         for i in range(small_bullet_num):
-            bullet2.append(Bullet(small.rect.midtop))
+            bullet2.append(small.bullet)
     for mid in mid_enemies:
         for i in range(mid_bullet_num):
-            bullet2.append(Bullet(mid.rect.midtop))
+            bullet2.append(mid.bullet)
     for big in big_enemies:
         for i in range(big_bullet_num):
-            bullet2.append(Bullet(big.rect.midtop))   
+            bullet2.append(big.bullet)   
     bullet_num2 = len(bullet2)
     
 
@@ -178,21 +178,18 @@ def main():
         #敌机发射子弹
         for small in small_enemies:
             if not (delay % 30):  # 每十帧发射一颗移动的子弹
-                #bullet_sound.play()
                 bullets = bullet2
                 bullets[bullet_index_enemy].reset(small.rect.midtop)
                 bullet_index_enemy = (bullet_index_enemy + 1) % bullet_num2
 
         for mid in mid_enemies:
             if not (delay % 30):  # 每十帧发射一颗移动的子弹
-                #bullet_sound.play()
                 bullets = bullet2
                 bullets[bullet_index_enemy].reset(mid.rect.midtop)
                 bullet_index_enemy = (bullet_index_enemy + 1) % bullet_num2
 
         for big in big_enemies:
             if not (delay % 30):  # 每十帧发射一颗移动的子弹
-                #bullet_sound.play()
                 bullets = bullet2
                 bullets[bullet_index_enemy].reset(big.rect.midtop)
                 bullet_index_enemy = (bullet_index_enemy + 1) % bullet_num2

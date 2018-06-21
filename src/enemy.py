@@ -8,7 +8,7 @@
 from random import randint
 
 import pygame
-
+from src.bullet import enemy_bullet
 
 class SmallEnemy(pygame.sprite.Sprite):
     """
@@ -39,6 +39,7 @@ class SmallEnemy(pygame.sprite.Sprite):
                 pygame.image.load("material/image/enemy1_down4.png")
             ]
         )
+        self.bullet = enemy_bullet(self.rect.midtop)
 
     def move(self):
         """
@@ -96,6 +97,7 @@ class MidEnemy(pygame.sprite.Sprite):
                 pygame.image.load("material/image/enemy2_down4.png")
             ]
         )
+        self.bullet = enemy_bullet(self.rect.midtop)
 
     def move(self):
         """
@@ -155,6 +157,7 @@ class BigEnemy(pygame.sprite.Sprite):
                 pygame.image.load("material/image/enemy3_down6.png")
             ]
         )
+        self.bullet = enemy_bullet(self.rect.midtop)
 
     def move(self):
         """
