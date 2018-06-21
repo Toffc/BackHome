@@ -13,6 +13,7 @@ from config.settings import BASE_DIR
 import os
 # 倒入精灵模块, 使飞机可以动起来
 import pygame
+from src.bullet import Bullet
 
 
 class OurPlane(pygame.sprite.Sprite):
@@ -44,6 +45,7 @@ class OurPlane(pygame.sprite.Sprite):
                 pygame.image.load(os.path.join(BASE_DIR, "material/image/hero_blowup_n4.png")),
             ]
         )
+        self.bullet = Bullet(self.rect.midtop)
 
     def move_up(self):
         """

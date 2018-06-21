@@ -29,6 +29,16 @@ class Bullet(pygame.sprite.Sprite):
         else:
             self.rect.top -= self.speed
 
+    def move_enemy(self):
+        """
+        子弹移动, 超出屏幕范围, 则设置死亡
+        :return:
+        """
+        if self.rect.top < 0:
+            self.active = False
+        else:
+            self.rect.top += self.speed
+
     def reset(self, position):
         """
         复位函数
@@ -38,5 +48,9 @@ class Bullet(pygame.sprite.Sprite):
         self.rect.left, self.rect.top = position
         self.active = True
 
-
+class enemy_bullet(Bullet):
+    def __init__(self, position):
+        super().__init__(position)
+        self.image = pygame.image.load('material/image/bullet2.png')
+        self.speed = 30
 

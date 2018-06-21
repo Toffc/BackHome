@@ -24,19 +24,23 @@ def main():
     running = True
     switch_image = False  # 切换飞机的标识位(使飞机具有喷气式效果)
     delay = 60  # 对一些效果进行延迟, 效果更好一些
+    num_small = 6
+    num_mid = 3
+    num_big = 2
 
     enemies = pygame.sprite.Group()  # 生成敌方飞机组(一种精灵组用以存储所有敌机精灵)
     small_enemies = pygame.sprite.Group()  # 敌方小型飞机组(不同型号敌机创建不同的精灵组来存储)
     mid_enemies = pygame.sprite.Group()  # 敌方中型飞机组(不同型号敌机创建不同的精灵组来存储)
     big_enemies = pygame.sprite.Group()  # 敌方大型飞机组(不同型号敌机创建不同的精灵组来存储)
 
-    add_small_enemies(small_enemies, enemies, 6,
+    add_small_enemies(small_enemies, enemies, num_small,
                       ai_settings.bg_size)  # 生成若干敌方小型飞机
-    add_mid_enemies(mid_enemies, enemies, 3, ai_settings.bg_size)  # 生成若干敌方小型飞机
-    add_big_enemies(big_enemies, enemies, 2, ai_settings.bg_size)  # 生成若干敌方小型飞机
+    add_mid_enemies(mid_enemies, enemies, num_mid, ai_settings.bg_size)  # 生成若干敌方小型飞机
+    add_big_enemies(big_enemies, enemies, num_big, ai_settings.bg_size)  # 生成若干敌方小型飞机
 
     # 定义子弹, 各种敌机和我方敌机的毁坏图像索引
     bullet_index = 0
+    bullet_index_enemy = 0
     e1_destroy_index = 0
     e2_destroy_index = 0
     e3_destroy_index = 0
@@ -44,9 +48,26 @@ def main():
 
     # 定义子弹实例化个数
     bullet1 = []
-    bullet_num = 6
+    bullet_num = 1
     for i in range(bullet_num):
         bullet1.append(Bullet(our_plane.rect.midtop))
+
+    #敌机的子弹
+    bullet2 = []
+    small_bullet_num = 1
+    mid_bullet_num = 1
+    big_bullet_num = 1 
+    for small in small_enemies:
+        for i in range(small_bullet_num):
+            bullet2.append(Bullet(small.rect.midtop))
+    for mid in mid_enemies:
+        for i in range(mid_bullet_num):
+            bullet2.append(Bullet(mid.rect.midtop))
+    for big in big_enemies:
+        for i in range(big_bullet_num):
+            bullet2.append(Bullet(big.rect.midtop))   
+    bullet_num2 = len(bullet2)
+    
 
     while running:
 
@@ -154,6 +175,33 @@ def main():
                         each.destroy_images[i], each.rect)
                 each.reset()
 
+        #敌机发射子弹
+        for small in small_enemies:
+            if not (delay % 30):  # 每十帧发射一颗移动的子弹
+                #bullet_sound.play()
+                bullets = bullet2
+                bullets[bullet_index_enemy].reset(small.rect.midtop)
+                bullet_index_enemy = (bullet_index_enemy + 1) % bullet_num2
+
+        for mid in mid_enemies:
+            if not (delay % 30):  # 每十帧发射一颗移动的子弹
+                #bullet_sound.play()
+                bullets = bullet2
+                bullets[bullet_index_enemy].reset(mid.rect.midtop)
+                bullet_index_enemy = (bullet_index_enemy + 1) % bullet_num2
+
+        for big in big_enemies:
+            if not (delay % 30):  # 每十帧发射一颗移动的子弹
+                #bullet_sound.play()
+                bullets = bullet2
+                bullets[bullet_index_enemy].reset(big.rect.midtop)
+                bullet_index_enemy = (bullet_index_enemy + 1) % bullet_num2
+        
+        for b in bullet2:
+            if b.active:  # 只有激活的子弹才可能击中飞机
+                b.move_enemy()
+                ai_settings.screen.blit(b.image, b.rect)
+
         # 当我方飞机存活状态, 正常展示
         if our_plane.active:
             if switch_image:
@@ -162,7 +210,7 @@ def main():
                 ai_settings.screen.blit(our_plane.image_two, our_plane.rect)
 
             # 飞机存活的状态下才可以发射子弹
-            if not (delay % 10):  # 每十帧发射一颗移动的子弹
+            if not (delay % 20):  # 每十帧发射一颗移动的子弹
                 bullet_sound.play()
                 bullets = bullet1
                 bullets[bullet_index].reset(our_plane.rect.midtop)
@@ -195,6 +243,13 @@ def main():
             our_plane.active = False
             for row in enemies_down:
                 row.active = False
+                
+        # 调用 pygame 实现的碰撞方法 spritecollide (我方飞机如果和子弹碰撞, 更改飞机的存活属性)
+        hit = pygame.sprite.spritecollide(our_plane, bullet2, False, pygame.sprite.collide_mask)
+        if hit:  # 如果子弹击中飞机
+            our_plane.active = False  # 子弹损毁
+            for b in hit:
+                b.active = False  # 飞机损毁
 
         # 响应用户的操作
         for event in pygame.event.get():
