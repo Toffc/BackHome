@@ -85,7 +85,6 @@ def main():
                 # 随机循环输出小飞机敌机
                 each.move()
                 ai_settings.screen.blit(each.image, each.rect)
-
                 pygame.draw.line(ai_settings.screen, ai_settings.color_black,
                                  (each.rect.left, each.rect.top - 5),
                                  (each.rect.right, each.rect.top - 5),
@@ -170,6 +169,11 @@ def main():
                         each.destroy_images[i], each.rect)
                 each.reset()
 
+        for b in bullet2:
+            if b.active:  # 只有激活的子弹才可能击中飞机
+                b.move()
+                ai_settings.screen.blit(b.image, b.rect)
+
         #敌机发射子弹
         for small in small_enemies:
             if not (delay % 30):  # 每十帧发射一颗移动的子弹
@@ -188,11 +192,6 @@ def main():
                 bullets = bullet2
                 bullets[bullet_index_enemy].reset(big.rect.midtop)
                 bullet_index_enemy = (bullet_index_enemy + 1) % bullet_num2
-        
-        for b in bullet2:
-            if b.active:  # 只有激活的子弹才可能击中飞机
-                b.move_enemy()
-                ai_settings.screen.blit(b.image, b.rect)
 
         # 当我方飞机存活状态, 正常展示
         if our_plane.active:
@@ -236,11 +235,11 @@ def main():
             for row in enemies_down:
                 row.active = False
                 
-        for b in bullet2:
-            hit = pygame.sprite.spritecollide(b, our_plane, False, pygame.sprite.collide_mask)
-            if hit:  # 如果子弹击中飞机
-                b.active = False  # 子弹损毁
-                our_plane.active = False  # 飞机损毁
+        hit = pygame.sprite.spritecollide(our_plane, bullet2, False, pygame.sprite.collide_mask)
+        if hit:  # 如果子弹击中飞机
+            our_plane.active = False  # 子弹损毁
+            for b in hit:
+                b.active = False  # 飞机损毁
 
         # 响应用户的操作
         for event in pygame.event.get():

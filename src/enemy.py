@@ -40,6 +40,7 @@ class SmallEnemy(pygame.sprite.Sprite):
             ]
         )
         self.bullet = enemy_bullet(self.rect.midtop)
+        
 
     def move(self):
         """
