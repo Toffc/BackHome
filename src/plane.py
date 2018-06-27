@@ -13,6 +13,7 @@ from config.settings import BASE_DIR
 import os
 # 倒入精灵模块, 使飞机可以动起来
 import pygame
+from src.bullet import Bullet
 
 
 class OurPlane(pygame.sprite.Sprite):
@@ -33,6 +34,7 @@ class OurPlane(pygame.sprite.Sprite):
         # 设置飞机移动速度
         self.speed = 10
         # 设置飞机存活状态(True为存活, False为死亡)
+        self.life = 3
         self.active = True
         # 加载飞机损毁图片
         self.destroy_images = []
@@ -44,6 +46,7 @@ class OurPlane(pygame.sprite.Sprite):
                 pygame.image.load(os.path.join(BASE_DIR, "material/image/hero_blowup_n4.png")),
             ]
         )
+        self.bullet = Bullet(self.rect.midtop)
 
     def move_up(self):
         """
