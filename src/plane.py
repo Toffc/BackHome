@@ -35,6 +35,8 @@ class OurPlane(pygame.sprite.Sprite):
         self.speed = 10
         # 设置飞机存活状态(True为存活, False为死亡)
         self.active = True
+        #设置飞机生命值
+        self.life = 3
         # 加载飞机损毁图片
         self.destroy_images = []
         self.destroy_images.extend(

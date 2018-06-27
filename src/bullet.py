@@ -69,3 +69,25 @@ class enemy_bullet(Bullet):
         self.rect.left, self.rect.top = position
         self.rect.top += 20
         self.active = True
+
+class enhance_bullet(Bullet):
+
+    def __init__(self, position):
+        super().__init__(position)
+        self.image = pygame.image.load('material/image/bullet3.png')
+        self.rect = self.image.get_rect()
+        self.rect.left, self.rect.top = position
+        self.rect.left -= 35
+        self.rect.top -= 15
+        self.speed = 40
+
+    def reset(self, position):
+        """
+        复位函数
+        :param position:
+        :return:
+        """
+        self.rect.left, self.rect.top = position
+        self.rect.left -= 35
+        self.rect.top -= 15
+        self.active = True

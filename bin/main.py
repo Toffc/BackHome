@@ -10,7 +10,8 @@ from src.plane import OurPlane  # 导入我们的飞机
 from src.enemy import *
 from src.game_stats import *
 from src.scoreboard import *
-from src.bullet import Bullet
+from src.bullet import *
+from src.props import *
 
 
 def main():
@@ -33,8 +34,18 @@ def main():
     mid_enemies = pygame.sprite.Group()  # 敌方中型飞机组(不同型号敌机创建不同的精灵组来存储)
     big_enemies = pygame.sprite.Group()  # 敌方大型飞机组(不同型号敌机创建不同的精灵组来存储)
 
-    add_small_enemies(small_enemies, enemies, num_small,
-                      ai_settings.bg_size)  # 生成若干敌方小型飞机
+    #生成道具组
+    props = pygame.sprite.Group()
+    props_bullet = pygame.sprite.Group()
+    props_plane_speed = pygame.sprite.Group()
+    props_plane_add_life = pygame.sprite.Group()
+
+    #生成道具
+    add_props_bullet(props_bullet, props, 1, ai_settings.bg_size)
+    add_props_plane_speed(props_plane_speed, props, 1, ai_settings.bg_size)
+    add_props_plane_add_life(props_plane_add_life, props, 1, ai_settings.bg_size)
+
+    add_small_enemies(small_enemies, enemies, num_small, ai_settings.bg_size)  # 生成若干敌方小型飞机
     add_mid_enemies(mid_enemies, enemies, num_mid, ai_settings.bg_size)  # 生成若干敌方小型飞机
     add_big_enemies(big_enemies, enemies, num_big, ai_settings.bg_size)  # 生成若干敌方小型飞机
 
@@ -49,28 +60,49 @@ def main():
         bullet1.append(our_plane.bullet)
 
     #敌机的子弹
-    bullet2 = []
+    small_bullet = []
+    mid_bullet = []
+    big_bullet = []
+
+    #定义敌机子弹实例化个数
     small_bullet_num = 1
     mid_bullet_num = 1
     big_bullet_num = 1 
+
     for small in small_enemies:
         for i in range(small_bullet_num):
-            bullet2.append(small.bullet)
+            small_bullet.append(small.bullet)
     for mid in mid_enemies:
         for i in range(mid_bullet_num):
-            bullet2.append(mid.bullet)
+            mid_bullet.append(mid.bullet)
     for big in big_enemies:
         for i in range(big_bullet_num):
-            bullet2.append(big.bullet)   
-    bullet_num2 = len(bullet2)
+            big_bullet.append(big.bullet)
+
+    small_bullet_all = len(small_bullet)
+    mid_bullet_all = len(mid_bullet)
+    big_bullet_all = len(big_bullet)
     
 
     while running:
 
         # 绘制背景图
         ai_settings.screen.blit(ai_settings.background, (0, 0))
+
+        #显示分数、生命、时间
         sb.show_score()
+        sb.prep_life()
         sb.show_life()
+        sb.prep_time()
+        sb.show_time()
+
+        # 计时
+        time_counter = 0  
+        time_counter += 1
+        if(time_counter == 10):
+            time_counter = 0
+            stats.sub_time()
+            sb.prep_time()
 
         # 微信的飞机貌似是喷气式的, 那么这个就涉及到一个帧数的问题
         clock = pygame.time.Clock()
@@ -169,7 +201,17 @@ def main():
                         each.destroy_images[i], each.rect)
                 each.reset()
 
-        for b in bullet2:
+        for b in small_bullet:
+            if b.active:  # 只有激活的子弹才可能击中飞机
+                b.move()
+                ai_settings.screen.blit(b.image, b.rect)
+
+        for b in mid_bullet:
+            if b.active:  # 只有激活的子弹才可能击中飞机
+                b.move()
+                ai_settings.screen.blit(b.image, b.rect)
+        
+        for b in big_bullet:
             if b.active:  # 只有激活的子弹才可能击中飞机
                 b.move()
                 ai_settings.screen.blit(b.image, b.rect)
@@ -177,21 +219,62 @@ def main():
         #敌机发射子弹
         for small in small_enemies:
             if not (delay % 30):  # 每十帧发射一颗移动的子弹
-                bullets = bullet2
+                bullets = small_bullet
                 bullets[bullet_index_enemy].reset(small.rect.midtop)
-                bullet_index_enemy = (bullet_index_enemy + 1) % bullet_num2
+                bullet_index_enemy = (bullet_index_enemy + 1) % small_bullet_all
 
         for mid in mid_enemies:
             if not (delay % 30):  # 每十帧发射一颗移动的子弹
-                bullets = bullet2
+                bullets = mid_bullet
                 bullets[bullet_index_enemy].reset(mid.rect.midtop)
-                bullet_index_enemy = (bullet_index_enemy + 1) % bullet_num2
+                bullet_index_enemy = (bullet_index_enemy + 1) % mid_bullet_all
 
         for big in big_enemies:
             if not (delay % 30):  # 每十帧发射一颗移动的子弹
-                bullets = bullet2
+                bullets = big_bullet
                 bullets[bullet_index_enemy].reset(big.rect.midtop)
-                bullet_index_enemy = (bullet_index_enemy + 1) % bullet_num2
+                bullet_index_enemy = (bullet_index_enemy + 1) % big_bullet_all
+
+        """
+        随机添加道具
+        """
+
+        for each in props_bullet:
+            if each.active:
+                each.move()
+                ai_settings.screen.blit(each.image, each.rect)
+
+            else:
+                each.reset()
+
+        for each in props_plane_speed:
+            if each.active:
+                each.move()
+                ai_settings.screen.blit(each.image, each.rect)
+
+            else:
+                each.reset()
+
+        for each in props_plane_add_life:
+            if each.active:
+                each.move()
+                ai_settings.screen.blit(each.image, each.rect)
+
+            else:
+                each.reset()
+
+        """
+        判断飞机获得道具
+        """
+        props_down = pygame.sprite.spritecollide(
+            our_plane, props, False, pygame.sprite.collide_mask)
+        if props_down:
+            for row in props_down:
+                row.active = False
+                our_plane = row.gain(our_plane)
+                if row.is_add_life and stats.life < 5:
+                    stats.add_life()
+                row.reset()
 
         # 当我方飞机存活状态, 正常展示
         if our_plane.active:
@@ -234,12 +317,39 @@ def main():
             our_plane.active = False
             for row in enemies_down:
                 row.active = False
-                
-        hit = pygame.sprite.spritecollide(our_plane, bullet2, False, pygame.sprite.collide_mask)
+
+        hit_plane = True        
+        hit = pygame.sprite.spritecollide(our_plane, small_bullet, False, pygame.sprite.collide_mask)
         if hit:  # 如果子弹击中飞机
-            our_plane.active = False  # 子弹损毁
             for b in hit:
-                b.active = False  # 飞机损毁
+                if b.active == True:
+                    b.active = False  # 子弹损毁
+                else:
+                    hit_plane = False
+            if hit_plane:
+                our_plane.active = False  # 飞机损毁
+        hit_plane = True
+        hit = pygame.sprite.spritecollide(our_plane, mid_bullet, False, pygame.sprite.collide_mask)
+        if hit:  # 如果子弹击中飞机
+            for b in hit:
+                if b.active == True:
+                    b.active = False  # 子弹损毁
+                else:
+                    hit_plane = False
+            if hit_plane:
+                our_plane.active = False  # 飞机损毁
+
+        hit_plane = True
+        hit = pygame.sprite.spritecollide(our_plane, big_bullet, False, pygame.sprite.collide_mask)
+        if hit:  # 如果子弹击中飞机
+            for b in hit:
+                if b.active == True:
+                    b.active = False  # 子弹损毁
+                else:
+                    hit_plane = False
+            if hit_plane:
+                our_plane.active = False  # 飞机损毁
+
 
         # 响应用户的操作
         for event in pygame.event.get():
