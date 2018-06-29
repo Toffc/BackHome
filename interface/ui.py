@@ -16,7 +16,7 @@ class Ui():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
-            elif event.type == pygame.MOUSEBUTTONDOWN and self.button_feiji.isCover:
+            elif event.type == pygame.MOUSEBUTTONDOWN and self.button_feiji.isCover():
                 stats.feiji = True
 
 
