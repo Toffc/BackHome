@@ -7,10 +7,6 @@ class Ui():
         self.button_feiji = Button('material/image/feiji.png', 'material/image/feiji_down.png', ai_settings.screen, (540,300))
         self.button_setting = Button('material/image/setting.png', 'material/image/setting_down.png', ai_settings.screen, (540,340))
 
-    # def check_play_button(self):
-    #     if self.button_feiji.isCover:
-    #         return True
-
     def show(self, ai_settings, stats):
         self.button_feiji.show()
         self.button_setting.show()
