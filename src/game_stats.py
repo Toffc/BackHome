@@ -5,6 +5,7 @@ class GameStats():
         self.score = 0
         self.life = 3
         self.time = 60
+        self.feiji = False
 
     def reset_stats(self):
         self.score = 0
