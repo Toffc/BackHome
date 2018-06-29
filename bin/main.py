@@ -12,12 +12,16 @@ from src.game_stats import *
 from src.scoreboard import *
 from src.bullet import *
 from src.props import *
-
+from interface.ui import *
 
 def main():
     ai_settings = Settings()
     stats = GameStats(ai_settings)
     sb = Scoreboard(ai_settings, stats)
+
+    #添加主界面类
+    ui = Ui(ai_settings, stats)
+
     # 获取我方飞机
     our_plane = OurPlane(ai_settings.bg_size)
     # 响应音乐
@@ -83,7 +87,20 @@ def main():
     mid_bullet_all = len(mid_bullet)
     big_bullet_all = len(big_bullet)
     
+    '''
+    开始界面
+    '''
+    while running:
+        ai_settings.screen.blit(ai_settings.background, (0, 0))
+        ui.show(ai_settings, stats)
+        if stats.feiji == True:
+            break
+        pygame.display.update()
+         
 
+    '''
+    飞机大战
+    '''
     while running:
 
         # 绘制背景图
