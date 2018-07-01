@@ -55,7 +55,7 @@ class enemy_bullet(Bullet):
         子弹移动, 超出屏幕范围, 则设置死亡
         :return:
         """
-        if self.rect.top < 0:
+        if self.rect.top < 0 or self.rect.top > 600:
             self.active = False
         else:
             self.rect.top += self.speed

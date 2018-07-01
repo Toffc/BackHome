@@ -6,7 +6,6 @@
 """
 
 from random import randint
-
 import pygame
 from src.bullet import enemy_bullet
 
@@ -40,7 +39,15 @@ class SmallEnemy(pygame.sprite.Sprite):
             ]
         )
         self.bullet = enemy_bullet(self.rect.midtop)
+        #加入发射子弹的时间
+        self.time = randint(0, 80)
         
+    def get_Time(self):
+        return self.time
+
+    def add_Time(self):
+        self.time += 1
+        self.time = self.time % 81
 
     def move(self):
         """
@@ -99,6 +106,15 @@ class MidEnemy(pygame.sprite.Sprite):
             ]
         )
         self.bullet = enemy_bullet(self.rect.midtop)
+        #加入发射子弹的时间
+        self.time = randint(0, 60)
+    
+    def get_Time(self):
+        return self.time
+
+    def add_Time(self):
+        self.time += 1
+        self.time = self.time % 61
 
     def move(self):
         """
@@ -159,6 +175,15 @@ class BigEnemy(pygame.sprite.Sprite):
             ]
         )
         self.bullet = enemy_bullet(self.rect.midtop)
+        #加入发射子弹的时间
+        self.time = randint(0, 50)
+
+    def get_Time(self):
+        return self.time
+
+    def add_Time(self):
+        self.time += 1
+        self.time = self.time % 51
 
     def move(self):
         """

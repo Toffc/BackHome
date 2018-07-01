@@ -9,7 +9,7 @@ z
     我方飞机和敌方飞机指定掩膜属性以及生存状态标志位 添加 self.mask 属性(可以实现更精准的碰撞效果)
 """
 from config.settings import BASE_DIR
-
+from random import randint
 import os
 # 倒入精灵模块, 使飞机可以动起来
 import pygame
@@ -48,6 +48,14 @@ class OurPlane(pygame.sprite.Sprite):
             ]
         )
         self.bullet = Bullet(self.rect.midtop)
+        self.time = randint(0, 30)
+    
+    def get_Time(self):
+        return self.time
+
+    def add_Time(self):
+        self.time += 1
+        self.time = self.time % 31
 
     def move_up(self):
         """
@@ -90,6 +98,9 @@ class OurPlane(pygame.sprite.Sprite):
         self.rect.left, self.rect.top = (self.width - self.rect.width) // 2, (self.height - self.rect.height - 10)
         # 重置飞机的存活状态
         self.active = True
+        #各项数值初始化
+        self.speed = 10
+        self.bullet = Bullet(self.rect.midtop)
 
 
 
