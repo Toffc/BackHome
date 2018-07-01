@@ -1,5 +1,6 @@
 import pygame.font
-from src.game_stats import * 
+from src.game_stats import *
+
 
 class Scoreboard():
     def __init__(self, ai_settings, stats):
@@ -14,11 +15,11 @@ class Scoreboard():
         self.prep_score()
         self.prep_life()
 
-    
     def prep_score(self):
         score_str = str(self.stats.score)
         score_str = "score:" + score_str
-        self.score_image = self.font.render(score_str, True, self.text_color, self.ai_settings.bg_color)
+        self.score_image = self.font.render(
+            score_str, True, self.text_color, self.ai_settings.bg_color)
 
         self.score_rect = self.score_image.get_rect()
         self.score_rect.right = self.screen_rect.right - 20
@@ -28,13 +29,29 @@ class Scoreboard():
         self.screen.blit(self.score_image, self.score_rect)
 
     def prep_life(self):
-        life_str = str(self.stats.life)
-        life_str = "life:" + life_str
-        self.life_image = self.font.render(life_str, True, self.text_color, self.ai_settings.bg_color)
+        self.images = []
+        for i in range(self.stats.life):
+            self.images.append(pygame.image.load("material/image/hero_life.png"))
 
-        self.life_rect = self.life_image.get_rect()
-        self.life_rect.right = self.screen_rect.right - 40
+        self.life_rect = self.images[0].get_rect()
+        self.life_rect.right = self.screen_rect.right + 20
         self.life_rect.top = 540
 
     def show_life(self):
-        self.screen.blit(self.life_image, self.life_rect)
+        now_rect = self.life_rect
+        for i in range(self.stats.life):
+            now_rect.right -= 50
+            self.screen.blit(self.images[i], now_rect)
+
+    #初始化时间显示
+    def prep_time(self):
+        time_str = str(self.stats.time)
+        time_str = time_str
+        self.time_image = self.font.render(time_str, True, self.text_color, self.ai_settings.bg_color)
+        self.time_rect = self.time_image.get_rect()
+        self.time_rect.right = self.screen_rect.right - 550
+        self.time_rect.top = 20
+    
+    #显示时间
+    def show_time(self):
+        self.screen.blit(self.time_image, self.time_rect)
