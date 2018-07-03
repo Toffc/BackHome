@@ -10,13 +10,20 @@ from src.plane import OurPlane  # 导入我们的飞机
 from src.enemy import *
 from src.game_stats import *
 from src.scoreboard import *
-from src.bullet import Bullet
+from src.bullet import *
+from src.props import *
+from interface.ui import *
+from src.random_bullet import *
 
 
 def main():
     ai_settings = Settings()
     stats = GameStats(ai_settings)
     sb = Scoreboard(ai_settings, stats)
+
+    #添加主界面类
+    ui = Ui(ai_settings, stats)
+
     # 获取我方飞机
     our_plane = OurPlane(ai_settings.bg_size)
     # 响应音乐
@@ -33,44 +40,103 @@ def main():
     mid_enemies = pygame.sprite.Group()  # 敌方中型飞机组(不同型号敌机创建不同的精灵组来存储)
     big_enemies = pygame.sprite.Group()  # 敌方大型飞机组(不同型号敌机创建不同的精灵组来存储)
 
-    add_small_enemies(small_enemies, enemies, num_small,
-                      ai_settings.bg_size)  # 生成若干敌方小型飞机
+    #生成道具组
+    props = pygame.sprite.Group()
+    props_bullet = pygame.sprite.Group()
+    props_plane_speed = pygame.sprite.Group()
+    props_plane_add_life = pygame.sprite.Group()
+
+    #生成弹幕
+    random_bullets = pygame.sprite.Group()
+    random_bullet_1 = pygame.sprite.Group()
+
+    #生成道具
+    add_props_bullet(props_bullet, props, 1, ai_settings.bg_size)
+    add_props_plane_speed(props_plane_speed, props, 1, ai_settings.bg_size)
+    add_props_plane_add_life(props_plane_add_life, props, 1, ai_settings.bg_size)
+
+    #生成弹幕
+    add_random_bullet(random_bullets, random_bullet_1, 20, ai_settings.bg_size)
+
+    #生成敌机
+    add_small_enemies(small_enemies, enemies, num_small, ai_settings.bg_size)  # 生成若干敌方小型飞机
     add_mid_enemies(mid_enemies, enemies, num_mid, ai_settings.bg_size)  # 生成若干敌方小型飞机
     add_big_enemies(big_enemies, enemies, num_big, ai_settings.bg_size)  # 生成若干敌方小型飞机
 
-    # 定义子弹, 各种敌机和我方敌机的毁坏图像索引
+    # 定义各种子弹索引
     bullet_index = 0
-    bullet_index_enemy = 0
+    bullet_index_small = 0
+    bullet_index_mid = 0
+    bullet_index_big = 0
 
-    # 定义子弹实例化个数
-    bullet1 = []
+    # 定义飞机子弹实例化个数
     bullet_num = 1
-    for i in range(bullet_num):
-        bullet1.append(our_plane.bullet)
 
     #敌机的子弹
-    bullet2 = []
+    small_bullet = []
+    mid_bullet = []
+    big_bullet = []
+
+    #定义敌机子弹实例化个数
     small_bullet_num = 1
     mid_bullet_num = 1
-    big_bullet_num = 1 
+    big_bullet_num = 1
+
+
     for small in small_enemies:
         for i in range(small_bullet_num):
-            bullet2.append(small.bullet)
+            small_bullet.append(small.bullet)
     for mid in mid_enemies:
         for i in range(mid_bullet_num):
-            bullet2.append(mid.bullet)
+            mid_bullet.append(mid.bullet)
     for big in big_enemies:
         for i in range(big_bullet_num):
-            bullet2.append(big.bullet)   
-    bullet_num2 = len(bullet2)
+            big_bullet.append(big.bullet)
+
+    small_bullet_all = len(small_bullet)
+    mid_bullet_all = len(mid_bullet)
+    big_bullet_all = len(big_bullet)
     
+    #计时变量    
+    time_counter = 0
+
+    '''
+    开始界面
+    '''
+    while running:
+        ai_settings.screen.blit(ai_settings.background, (0, 0))
+        ui.show(ai_settings, stats)
+        if stats.feiji == True:
+            break
+        pygame.display.update()
+
+    '''
+    飞机大战
+    '''
 
     while running:
 
         # 绘制背景图
         ai_settings.screen.blit(ai_settings.background, (0, 0))
+
+        # 飞机装填子弹
+        bullet1 = []
+        for i in range(bullet_num):
+            bullet1.append(our_plane.bullet)
+
+        #显示分数、生命、时间
         sb.show_score()
+        sb.prep_life()
         sb.show_life()
+        sb.prep_time()
+        sb.show_time()
+
+        # 计时
+        time_counter += 1
+        if(time_counter == 50):
+            time_counter = 0
+            stats.sub_time()
+            sb.prep_time()
 
         # 微信的飞机貌似是喷气式的, 那么这个就涉及到一个帧数的问题
         clock = pygame.time.Clock()
@@ -79,6 +145,8 @@ def main():
         # 绘制我方飞机的两种不同的形式
         if not delay % 3:
             switch_image = not switch_image
+
+        ''' 绘制敌机 '''
 
         for each in small_enemies:
             if each.active:
@@ -108,90 +176,171 @@ def main():
                         each.destroy_images[i], each.rect)
                 each.reset()
 
-        for each in mid_enemies:
-            if each.active:
-                # 随机循环输出中飞机敌机
-                each.move()
-                ai_settings.screen.blit(each.image, each.rect)
+        #在不同时间段增加敌机类型
+        if stats.getTime() <= 40:
+            for each in mid_enemies:
+                if each.active:
+                    # 随机循环输出中飞机敌机
+                    each.move()
+                    ai_settings.screen.blit(each.image, each.rect)
 
-                pygame.draw.line(ai_settings.screen, ai_settings.color_black,
-                                 (each.rect.left, each.rect.top - 5),
-                                 (each.rect.right, each.rect.top - 5),
-                                 2)
-                energy_remain = each.energy / MidEnemy.energy
-                if energy_remain > 0.2:  # 如果血量大约百分之二十则为绿色，否则为红色
-                    energy_color = ai_settings.color_green
+                    pygame.draw.line(ai_settings.screen, ai_settings.color_black,
+                                    (each.rect.left, each.rect.top - 5),
+                                    (each.rect.right, each.rect.top - 5),
+                                    2)
+                    energy_remain = each.energy / MidEnemy.energy
+                    if energy_remain > 0.2:  # 如果血量大约百分之二十则为绿色，否则为红色
+                        energy_color = ai_settings.color_green
+                    else:
+                        energy_color = ai_settings.color_red
+                    pygame.draw.line(ai_settings.screen, energy_color,
+                                    (each.rect.left, each.rect.top - 5),
+                                    (each.rect.left + each.rect.width *
+                                    energy_remain, each.rect.top - 5),
+                                    2)
                 else:
-                    energy_color = ai_settings.color_red
-                pygame.draw.line(ai_settings.screen, energy_color,
-                                 (each.rect.left, each.rect.top - 5),
-                                 (each.rect.left + each.rect.width *
-                                  energy_remain, each.rect.top - 5),
-                                 2)
-            else:
-                enemy2_down_sound.play()
-                stats.add_score(100)
-                sb.prep_score()
-                for i in range(5):
-                    time.sleep(0.02)
-                    ai_settings.screen.blit(
-                        each.destroy_images[i], each.rect)
-                each.reset()
+                    enemy2_down_sound.play()
+                    stats.add_score(100)
+                    sb.prep_score()
+                    for i in range(5):
+                        time.sleep(0.02)
+                        ai_settings.screen.blit(
+                            each.destroy_images[i], each.rect)
+                    each.reset()
 
-        for each in big_enemies:
-            if each.active:
-                # 随机循环输出大飞机敌机
-                each.move()
-                ai_settings.screen.blit(each.image, each.rect)
+        #在不同时间段增加敌机类型
+        if stats.getTime() <= 20: 
+            for each in big_enemies:
+                if each.active:
+                    # 随机循环输出大飞机敌机
+                    each.move()
+                    ai_settings.screen.blit(each.image, each.rect)
 
-                pygame.draw.line(ai_settings.screen, ai_settings.color_black,
-                                 (each.rect.left, each.rect.top - 5),
-                                 (each.rect.right, each.rect.top - 5),
-                                 2)
-                energy_remain = each.energy / BigEnemy.energy
-                if energy_remain > 0.2:  # 如果血量大约百分之二十则为绿色，否则为红色
-                    energy_color = ai_settings.color_green
+                    pygame.draw.line(ai_settings.screen, ai_settings.color_black,
+                                    (each.rect.left, each.rect.top - 5),
+                                    (each.rect.right, each.rect.top - 5),
+                                    2)
+                    energy_remain = each.energy / BigEnemy.energy
+                    if energy_remain > 0.2:  # 如果血量大约百分之二十则为绿色，否则为红色
+                        energy_color = ai_settings.color_green
+                    else:
+                        energy_color = ai_settings.color_red
+                    pygame.draw.line(ai_settings.screen, energy_color,
+                                    (each.rect.left, each.rect.top - 5),
+                                    (each.rect.left + each.rect.width *
+                                    energy_remain, each.rect.top - 5),
+                                    2)
                 else:
-                    energy_color = ai_settings.color_red
-                pygame.draw.line(ai_settings.screen, energy_color,
-                                 (each.rect.left, each.rect.top - 5),
-                                 (each.rect.left + each.rect.width *
-                                  energy_remain, each.rect.top - 5),
-                                 2)
-            else:
-                enemy3_down_sound.play()
-                #更新得分
-                stats.add_score(200)
-                sb.prep_score()
-                for i in range(7):
-                    time.sleep(0.02)
-                    ai_settings.screen.blit(
-                        each.destroy_images[i], each.rect)
-                each.reset()
+                    enemy3_down_sound.play()
+                    #更新得分
+                    stats.add_score(200)
+                    sb.prep_score()
+                    for i in range(7):
+                        time.sleep(0.02)
+                        ai_settings.screen.blit(
+                            each.destroy_images[i], each.rect)
+                    each.reset()
 
-        for b in bullet2:
+        for b in small_bullet:
+            if b.active:  # 只有激活的子弹才可能击中飞机
+                b.move()
+                ai_settings.screen.blit(b.image, b.rect)
+
+        for b in mid_bullet:
+            if b.active:  # 只有激活的子弹才可能击中飞机
+                b.move()
+                ai_settings.screen.blit(b.image, b.rect)
+        
+        for b in big_bullet:
             if b.active:  # 只有激活的子弹才可能击中飞机
                 b.move()
                 ai_settings.screen.blit(b.image, b.rect)
 
         #敌机发射子弹
         for small in small_enemies:
-            if not (delay % 30):  # 每十帧发射一颗移动的子弹
-                bullets = bullet2
-                bullets[bullet_index_enemy].reset(small.rect.midtop)
-                bullet_index_enemy = (bullet_index_enemy + 1) % bullet_num2
+            if small.get_Time() == 80:  # 敌机内置时间达到指定值，发射子弹
+                bullets = small_bullet
+                bullets[bullet_index_small].reset(small.rect.midtop)
+                bullet_index_small = (
+                    bullet_index_small + 1) % small_bullet_all
+            small.add_Time()
 
         for mid in mid_enemies:
-            if not (delay % 30):  # 每十帧发射一颗移动的子弹
-                bullets = bullet2
-                bullets[bullet_index_enemy].reset(mid.rect.midtop)
-                bullet_index_enemy = (bullet_index_enemy + 1) % bullet_num2
+            if mid.get_Time() == 60:  #  敌机内置时间达到指定值，发射子弹
+                bullets = mid_bullet
+                bullets[bullet_index_mid].reset(mid.rect.midtop)
+                bullet_index_mid = (bullet_index_mid + 1) % mid_bullet_all
+            mid.add_Time()
 
         for big in big_enemies:
-            if not (delay % 30):  # 每十帧发射一颗移动的子弹
-                bullets = bullet2
-                bullets[bullet_index_enemy].reset(big.rect.midtop)
-                bullet_index_enemy = (bullet_index_enemy + 1) % bullet_num2
+            if big.get_Time() == 50:  # 敌机内置时间达到指定值，发射子弹
+                bullets = big_bullet
+                bullets[bullet_index_big].reset(big.rect.midtop)
+                bullet_index_big = (bullet_index_big + 1) % big_bullet_all
+            big.add_Time()
+
+        """
+        随机添加道具
+        """
+
+        for each in props_bullet:
+            if each.active:
+                each.move()
+                ai_settings.screen.blit(each.image, each.rect)
+
+            else:
+                each.reset()
+
+        for each in props_plane_speed:
+            if each.active:
+                each.move()
+                ai_settings.screen.blit(each.image, each.rect)
+
+            else:
+                each.reset()
+
+        for each in props_plane_add_life:
+            if each.active:
+                each.move()
+                ai_settings.screen.blit(each.image, each.rect)
+
+            else:
+                each.reset()
+        
+        #弹幕移动
+        for each in random_bullet_1:
+            if each.active:
+                each.move()
+                ai_settings.screen.blit(each.image, each.rect)
+
+            else:
+                each.reset()
+
+        #弹幕击中飞机
+        hit_plane = True
+        hit = pygame.sprite.spritecollide(
+            our_plane, random_bullet_1, False, pygame.sprite.collide_mask)
+        if hit:  # 如果子弹击中飞机
+            for b in hit:
+                if b.active == True:
+                    b.active = False  # 子弹损毁
+                else:
+                    hit_plane = False
+            if hit_plane:
+                our_plane.active = False  # 飞机损毁
+
+        """
+        判断飞机获得道具
+        """
+        props_down = pygame.sprite.spritecollide(
+            our_plane, props, False, pygame.sprite.collide_mask)
+        if props_down:
+            for row in props_down:
+                row.active = False
+                our_plane = row.gain(our_plane)
+                if row.is_add_life and stats.life < 5:
+                    stats.add_life()
+                row.reset()
 
         # 当我方飞机存活状态, 正常展示
         if our_plane.active:
@@ -201,13 +350,14 @@ def main():
                 ai_settings.screen.blit(our_plane.image_two, our_plane.rect)
 
             # 飞机存活的状态下才可以发射子弹
-            if not (delay % 20):  # 每十帧发射一颗移动的子弹
+            if our_plane.get_Time() == 30:  #限定飞机发射子弹的间隔
                 bullet_sound.play()
                 bullets = bullet1
                 bullets[bullet_index].reset(our_plane.rect.midtop)
                 bullet_index = (bullet_index + 1) % bullet_num
+            our_plane.add_Time()
 
-            for b in bullets:
+            for b in bullet1:
                 if b.active:  # 只有激活的子弹才可能击中敌机
                     b.move()
                     ai_settings.screen.blit(b.image, b.rect)
@@ -234,12 +384,40 @@ def main():
             our_plane.active = False
             for row in enemies_down:
                 row.active = False
-                
-        hit = pygame.sprite.spritecollide(our_plane, bullet2, False, pygame.sprite.collide_mask)
+
+        hit_plane = True        
+        hit = pygame.sprite.spritecollide(our_plane, small_bullet, False, pygame.sprite.collide_mask)
         if hit:  # 如果子弹击中飞机
-            our_plane.active = False  # 子弹损毁
             for b in hit:
-                b.active = False  # 飞机损毁
+                if b.active == True:
+                    b.active = False  # 子弹损毁
+                else:
+                    hit_plane = False
+            if hit_plane:
+                our_plane.active = False  # 飞机损毁
+
+        hit_plane = True
+        hit = pygame.sprite.spritecollide(our_plane, mid_bullet, False, pygame.sprite.collide_mask)
+        if hit:  # 如果子弹击中飞机
+            for b in hit:
+                if b.active == True:
+                    b.active = False  # 子弹损毁
+                else:
+                    hit_plane = False
+            if hit_plane:
+                our_plane.active = False  # 飞机损毁
+
+        hit_plane = True
+        hit = pygame.sprite.spritecollide(our_plane, big_bullet, False, pygame.sprite.collide_mask)
+        if hit:  # 如果子弹击中飞机
+            for b in hit:
+                if b.active == True:
+                    b.active = False  # 子弹损毁
+                else:
+                    hit_plane = False
+            if hit_plane:
+                our_plane.active = False  # 飞机损毁
+
 
         # 响应用户的操作
         for event in pygame.event.get():
