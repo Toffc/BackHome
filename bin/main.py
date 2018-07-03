@@ -59,6 +59,8 @@ def main():
     add_random_bullet(random_bullets, random_bullet_1, 20, ai_settings.bg_size)
 
     #生成敌机
+=======
+>>>>>>> 4f213cc1bf214b78e5d347b5b20dba260ea088d4
     add_small_enemies(small_enemies, enemies, num_small, ai_settings.bg_size)  # 生成若干敌方小型飞机
     add_mid_enemies(mid_enemies, enemies, num_mid, ai_settings.bg_size)  # 生成若干敌方小型飞机
     add_big_enemies(big_enemies, enemies, num_big, ai_settings.bg_size)  # 生成若干敌方小型飞机
