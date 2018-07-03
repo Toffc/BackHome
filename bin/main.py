@@ -56,7 +56,7 @@ def main():
     add_props_plane_add_life(props_plane_add_life, props, 1, ai_settings.bg_size)
 
     #生成弹幕
-    add_random_bullet(random_bullets, random_bullet_1, 20, ai_settings.bg_size)
+    add_random_bullet(random_bullets, random_bullet_1, 15, ai_settings.bg_size)
 
     #生成敌机
     add_small_enemies(small_enemies, enemies, num_small, ai_settings.bg_size)  # 生成若干敌方小型飞机
