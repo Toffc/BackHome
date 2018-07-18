@@ -24,6 +24,24 @@ class Settings():
         self.color_white = (255, 255, 255)
         self.bg_color = (200, 200, 200)
 
+class MyMap(pygame.sprite.Sprite):
+    
+    def __init__(self,x,y, background, length):
+        self.x = x
+        self.y = y
+        self.bg = background.convert_alpha()
+        self.length = length
+
+    def map_rolling(self):
+        if self.y > self.length:
+            self.y = -self.length
+        else:
+            self.y +=5
+    def map_update(self, screen):
+        screen.blit(self.bg, (self.x,self.y))
+    def set_pos(x,y):
+        self.x =x
+        self.y =y
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 pygame.mixer.init()  # 混音器初始化
