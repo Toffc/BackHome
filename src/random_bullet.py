@@ -15,7 +15,7 @@ class random_bullet(pygame.sprite.Sprite):
         self.width, self.height = bg_size[0], bg_size[1]
         self.mask = pygame.mask.from_surface(
             self.image)  # 获取图像的掩膜用以更加精确的碰撞检测
-        self.speed = 10
+        self.speed = 1
         # 定义子弹出现的位置, 保证子弹不会在程序已开始就立即出现
         self.rect.left, self.rect.top = (
             randint(0, self.width - self.rect.width),  randint(-5 *

@@ -46,7 +46,7 @@ class enemy_bullet(Bullet):
         self.rect = self.image.get_rect()
         self.rect.left, self.rect.top = position
         self.rect.top += 20 
-        self.speed = 30
+        self.speed = 10
         self.active = True
         self.mask = pygame.mask.from_surface(self.image)
 
