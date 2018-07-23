@@ -21,11 +21,14 @@ def main():
     stats = GameStats(ai_settings)
     sb = Scoreboard(ai_settings, stats)
 
+    bg1 = MyMap(0,0, ai_settings.background, 600)
+    bg2 = MyMap(0,600, ai_settings.background, 600)
+
     #添加主界面类
     ui = Ui(ai_settings, stats)
 
     # 获取我方飞机
-    our_plane = OurPlane(ai_settings.bg_size)
+    our_plane = OurPlane(ai_settings.bg_size, ai_settings.screen)
     # 响应音乐
     pygame.mixer.music.play(-1)  # loops 接收该参数, -1 表示无限循环(默认循环播放一次)
     running = True
@@ -117,12 +120,16 @@ def main():
     while running:
 
         # 绘制背景图
-        ai_settings.screen.blit(ai_settings.background, (0, 0))
+        #ai_settings.screen.blit(ai_settings.background, (0, 0))
+        bg1.map_update(ai_settings.screen)
+        bg2.map_update(ai_settings.screen)
+        bg1.map_rolling()
+        bg2.map_rolling()
 
         # 飞机装填子弹
         bullet1 = []
         for i in range(bullet_num):
-            bullet1.append(our_plane.bullet)
+            bullet1.append(our_plane.bullets)
 
         #显示分数、生命、时间
         sb.show_score()
@@ -143,8 +150,8 @@ def main():
         clock.tick(60)
 
         # 绘制我方飞机的两种不同的形式
-        if not delay % 3:
-            switch_image = not switch_image
+        #if not delay % 3:
+        #    switch_image = not switch_image
 
         ''' 绘制敌机 '''
 
@@ -307,6 +314,7 @@ def main():
             else:
                 each.reset()
         
+        
         #弹幕移动
         for each in random_bullet_1:
             if each.active:
@@ -328,10 +336,8 @@ def main():
                     hit_plane = False
             if hit_plane:
                 our_plane.active = False  # 飞机损毁
-
-        """
-        判断飞机获得道具
-        """
+        
+        #判断飞机获得道具
         props_down = pygame.sprite.spritecollide(
             our_plane, props, False, pygame.sprite.collide_mask)
         if props_down:
@@ -344,12 +350,21 @@ def main():
 
         # 当我方飞机存活状态, 正常展示
         if our_plane.active:
-            if switch_image:
-                ai_settings.screen.blit(our_plane.image_one, our_plane.rect)
-            else:
-                ai_settings.screen.blit(our_plane.image_two, our_plane.rect)
+            our_plane.display(delay)
 
-            # 飞机存活的状态下才可以发射子弹
+            bullets = our_plane.fire(enemies)
+            for b in bullets:
+                if b.active:  # 只有激活的子弹才可能击中敌机
+                    b.move()
+                    ai_settings.screen.blit(b.image, b.rect)
+                    enemies_hit = pygame.sprite.spritecollide(b, enemies, False, pygame.sprite.collide_mask)
+                    if enemies_hit:  # 如果子弹击中飞机
+                        b.active = False  # 子弹损毁
+                        for e in enemies_hit:
+                            e.active = e.reduce_energy()  # 小型敌机损毁
+        else:
+            our_plane.destroy(delay)
+            '''# 飞机存活的状态下才可以发射子弹
             if our_plane.get_Time() == 30:  #限定飞机发射子弹的间隔
                 bullet_sound.play()
                 bullets = bullet1
@@ -377,7 +392,7 @@ def main():
             stats.sub_life()
             sb.prep_life()    
             our_plane.reset()
-
+'''
         # 调用 pygame 实现的碰撞方法 spritecollide (我方飞机如果和敌机碰撞, 更改飞机的存活属性)
         enemies_down = pygame.sprite.spritecollide(our_plane, enemies, False, pygame.sprite.collide_mask)
         if enemies_down:
