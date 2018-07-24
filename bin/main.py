@@ -26,7 +26,9 @@ def main():
     bg1 = MyMap(0,0, ai_settings.background, 600)
     bg2 = MyMap(0,600, ai_settings.background, 600)
 
-    #添加主界面类
+    #添加主界面类以及界面背景加载
+    ui_back = pygame.image.load(os.path.join(
+            BASE_DIR, "material/image/openning.png"))
     ui = Ui(ai_settings, stats)
 
     # 获取我方飞机
@@ -105,7 +107,7 @@ def main():
     开始界面
     '''
     while running:
-        ai_settings.screen.blit(ai_settings.background, (0, 0))
+        ai_settings.screen.blit(ui_back, (0, 0))
         ui.show(ai_settings, stats)
         if stats.feiji == True:
             break
