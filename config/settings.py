@@ -4,7 +4,49 @@
 import os
 import pygame
 
+v = 0.2
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+pygame.mixer.init()  # 混音器初始化
+# 游戏背景音乐
+pygame.mixer.music.load(os.path.join(BASE_DIR, "material/sound/game_music.wav"))
+pygame.mixer.music.set_volume(v)
+
+# 子弹发射音乐
+bullet_sound = pygame.mixer.Sound(os.path.join(BASE_DIR, "material/sound/bullet.wav"))
+bullet_sound.set_volume(v)
+
+# 我方飞机挂了的音乐
+me_down_sound = pygame.mixer.Sound(os.path.join(BASE_DIR, "material/sound/game_over.wav"))
+me_down_sound.set_volume(v)
+
+# 敌方飞机挂了的音乐
+enemy1_down_sound = pygame.mixer.Sound(os.path.join(BASE_DIR, "material/sound/enemy1_down.wav"))
+enemy1_down_sound.set_volume(v)
+
+enemy2_down_sound = pygame.mixer.Sound(os.path.join(BASE_DIR, "material/sound/enemy2_down.wav"))
+enemy2_down_sound.set_volume(v)
+
+enemy3_down_sound = pygame.mixer.Sound(os.path.join(BASE_DIR, "material/sound/enemy3_down.wav"))
+enemy3_down_sound.set_volume(v)
+
+button_down_sound = pygame.mixer.Sound(os.path.join(BASE_DIR, "material/sound/button.wav"))
+button_down_sound.set_volume(v)
+
+level_up_sound = pygame.mixer.Sound(os.path.join(BASE_DIR, "material/sound/achievement.wav"))
+level_up_sound.set_volume(v)
+
+bomb_sound = pygame.mixer.Sound(os.path.join(BASE_DIR, "material/sound/use_bomb.wav"))
+bomb_sound.set_volume(v)
+
+get_bomb_sound = pygame.mixer.Sound(os.path.join(BASE_DIR, "material/sound/get_bomb.wav"))
+get_bomb_sound.set_volume(v)
+
+get_bullet_sound = pygame.mixer.Sound(os.path.join(BASE_DIR, "material/sound/get_double_laser.wav"))
+get_bullet_sound.set_volume(v)
+
+big_enemy_flying_sound = pygame.mixer.Sound(os.path.join(BASE_DIR, "material/sound/big_spaceship_flying.wav"))
+big_enemy_flying_sound.set_volume(v)
 
 class Settings():
     def __init__(self):
@@ -43,45 +85,18 @@ class MyMap(pygame.sprite.Sprite):
         self.x =x
         self.y =y
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-pygame.mixer.init()  # 混音器初始化
-# 游戏背景音乐
-pygame.mixer.music.load(os.path.join(BASE_DIR, "material/sound/game_music.wav"))
-pygame.mixer.music.set_volume(0.2)
 
-# 子弹发射音乐
-bullet_sound = pygame.mixer.Sound(os.path.join(BASE_DIR, "material/sound/bullet.wav"))
-bullet_sound.set_volume(0.2)
+def add_volume(v):
+    v += 0.1
+    pygame.mixer.music.set_volume(v)
+    
+def min_volume(v):
+    v -= 0.1
+    pygame.mixer.music.set_volume(v)
 
-# 我方飞机挂了的音乐
-me_down_sound = pygame.mixer.Sound(os.path.join(BASE_DIR, "material/sound/game_over.wav"))
-me_down_sound.set_volume(0.2)
+def mute():
+    pygame.mixer.music.set_volume(0)
 
-# 敌方飞机挂了的音乐
-enemy1_down_sound = pygame.mixer.Sound(os.path.join(BASE_DIR, "material/sound/enemy1_down.wav"))
-enemy1_down_sound.set_volume(0.2)
-
-enemy2_down_sound = pygame.mixer.Sound(os.path.join(BASE_DIR, "material/sound/enemy2_down.wav"))
-enemy2_down_sound.set_volume(0.2)
-
-enemy3_down_sound = pygame.mixer.Sound(os.path.join(BASE_DIR, "material/sound/enemy3_down.wav"))
-enemy3_down_sound.set_volume(0.2)
-
-button_down_sound = pygame.mixer.Sound(os.path.join(BASE_DIR, "material/sound/button.wav"))
-button_down_sound.set_volume(0.2)
-
-level_up_sound = pygame.mixer.Sound(os.path.join(BASE_DIR, "material/sound/achievement.wav"))
-level_up_sound.set_volume(0.2)
-
-bomb_sound = pygame.mixer.Sound(os.path.join(BASE_DIR, "material/sound/use_bomb.wav"))
-bomb_sound.set_volume(0.2)
-
-get_bomb_sound = pygame.mixer.Sound(os.path.join(BASE_DIR, "material/sound/get_bomb.wav"))
-get_bomb_sound.set_volume(0.2)
-
-get_bullet_sound = pygame.mixer.Sound(os.path.join(BASE_DIR, "material/sound/get_double_laser.wav"))
-get_bullet_sound.set_volume(0.2)
-
-big_enemy_flying_sound = pygame.mixer.Sound(os.path.join(BASE_DIR, "material/sound/big_spaceship_flying.wav"))
-big_enemy_flying_sound.set_volume(0.2)
+def normal():
+    pygame.mixer.music.set_volume(v)
 

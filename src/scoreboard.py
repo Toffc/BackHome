@@ -55,3 +55,9 @@ class Scoreboard():
     #显示时间
     def show_time(self):
         self.screen.blit(self.time_image, self.time_rect)
+
+
+    def show_end(self):
+        self.screen.blit(pygame.image.load("material/image/end_bg.png"), (0, 0))
+        self.screen.blit(pygame.image.load("material/image/end.png"), (130, 200))
+        self.screen.blit(pygame.image.load("material/image/end1.png"), (135, 400))

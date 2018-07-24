@@ -5,7 +5,9 @@ class GameStats():
         self.score = 0
         self.life = 3
         self.time = 300
-        self.feiji = False
+        self.function = 0
+        self.mode = 0 
+        self.mute = False
 
     def reset_stats(self):
         self.score = 0
