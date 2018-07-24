@@ -15,6 +15,8 @@ class Bullet(pygame.sprite.Sprite):
         self.image = pygame.image.load('material/image/bullet1.png')
         self.rect = self.image.get_rect()
         self.rect.left, self.rect.top = position
+        self.rect.left -= 10
+        self.rect.top -= 3
         self.speed = 30
         self.active = True
         self.mask = pygame.mask.from_surface(self.image)
@@ -36,6 +38,8 @@ class Bullet(pygame.sprite.Sprite):
         :return:
         """
         self.rect.left, self.rect.top = position
+        self.rect.left -= 10
+        self.rect.top -= 3
         self.active = True
 
 class enemy_bullet(Bullet):
@@ -45,7 +49,8 @@ class enemy_bullet(Bullet):
         self.image = pygame.image.load('material/image/bullet2.png')
         self.rect = self.image.get_rect()
         self.rect.left, self.rect.top = position
-        self.rect.top += 20 
+        self.rect.top += 20
+        self.rect.left -= 24
         self.speed = 10
         self.active = True
         self.mask = pygame.mask.from_surface(self.image)
@@ -68,6 +73,7 @@ class enemy_bullet(Bullet):
         """
         self.rect.left, self.rect.top = position
         self.rect.top += 20
+        self.rect.left -= 24
         self.active = True
 
 class enhance_bullet(Bullet):
@@ -77,9 +83,9 @@ class enhance_bullet(Bullet):
         self.image = pygame.image.load('material/image/bullet3.png')
         self.rect = self.image.get_rect()
         self.rect.left, self.rect.top = position
-        self.rect.left -= 35
         self.rect.top -= 15
-        self.speed = 40
+        self.rect.left -= 28
+        self.speed = 35
 
     def reset(self, position):
         """
@@ -88,6 +94,6 @@ class enhance_bullet(Bullet):
         :return:
         """
         self.rect.left, self.rect.top = position
-        self.rect.left -= 35
         self.rect.top -= 15
+        self.rect.left -= 28
         self.active = True

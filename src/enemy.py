@@ -33,9 +33,7 @@ class SmallEnemy(pygame.sprite.Sprite):
         self.destroy_images.extend(
             [
                 pygame.image.load("material/image/enemy1_down1.png"),
-                pygame.image.load("material/image/enemy1_down2.png"),
-                pygame.image.load("material/image/enemy1_down3.png"),
-                pygame.image.load("material/image/enemy1_down4.png")
+                pygame.image.load("material/image/enemy1_down2.png")
             ]
         )
         self.bullet = enemy_bullet(self.rect.midtop)
@@ -98,11 +96,8 @@ class MidEnemy(pygame.sprite.Sprite):
         self.destroy_images = []
         self.destroy_images.extend(
             [
-                pygame.image.load("material/image/enemy2_hit.png"),
                 pygame.image.load("material/image/enemy2_down1.png"),
-                pygame.image.load("material/image/enemy2_down2.png"),
-                pygame.image.load("material/image/enemy2_down3.png"),
-                pygame.image.load("material/image/enemy2_down4.png")
+                pygame.image.load("material/image/enemy2_down2.png")
             ]
         )
         self.bullet = enemy_bullet(self.rect.midtop)
@@ -149,7 +144,7 @@ class BigEnemy(pygame.sprite.Sprite):
 
     def __init__(self, bg_size):
         super(BigEnemy, self).__init__()
-        self.image = pygame.image.load("material\image\enemy3_n1.png")
+        self.image = pygame.image.load("material\image\enemy3.png")
         self.rect = self.image.get_rect()
         self.width, self.height = bg_size[0], bg_size[1]
         self.mask = pygame.mask.from_surface(self.image)  # 获取飞机图像的掩膜用以更加精确的碰撞检测
@@ -165,13 +160,8 @@ class BigEnemy(pygame.sprite.Sprite):
         self.destroy_images = []
         self.destroy_images.extend(
             [
-                pygame.image.load("material/image/enemy3_hit.png"),
                 pygame.image.load("material/image/enemy3_down1.png"),
-                pygame.image.load("material/image/enemy3_down2.png"),
-                pygame.image.load("material/image/enemy3_down3.png"),
-                pygame.image.load("material/image/enemy3_down4.png"),
-                pygame.image.load("material/image/enemy3_down5.png"),
-                pygame.image.load("material/image/enemy3_down6.png")
+                pygame.image.load("material/image/enemy3_down2.png")
             ]
         )
         self.bullet = enemy_bullet(self.rect.midtop)

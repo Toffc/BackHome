@@ -11,7 +11,7 @@ class Settings():
 
         pygame.init()  # 游戏初始化
               
-        self.bg_size = 1080, 600  # 初始化游戏背景大小(宽, 高)
+        self.bg_size = 400, 600  # 初始化游戏背景大小(宽, 高)
         self.screen = pygame.display.set_mode(self.bg_size)  # 设置背景对话框
         pygame.display.set_caption("飞机大战")  # 设置标题
         self.background = pygame.image.load(os.path.join(

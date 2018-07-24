@@ -49,7 +49,7 @@ class Scoreboard():
         time_str = time_str
         self.time_image = self.font.render(time_str, True, self.text_color, self.ai_settings.bg_color)
         self.time_rect = self.time_image.get_rect()
-        self.time_rect.right = self.screen_rect.right - 550
+        self.time_rect.right = self.screen_rect.right - 220
         self.time_rect.top = 20
     
     #显示时间

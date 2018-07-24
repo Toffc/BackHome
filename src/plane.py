@@ -46,10 +46,7 @@ class OurPlane(pygame.sprite.Sprite):
         self.destroy_images = []
         self.destroy_images.extend(
             [
-                pygame.image.load(os.path.join(BASE_DIR, "material/image/hero_blowup_n1.png")),
-                pygame.image.load(os.path.join(BASE_DIR, "material/image/hero_blowup_n2.png")),
-                pygame.image.load(os.path.join(BASE_DIR, "material/image/hero_blowup_n3.png")),
-                pygame.image.load(os.path.join(BASE_DIR, "material/image/hero_blowup_n4.png")),
+                pygame.image.load(os.path.join(BASE_DIR, "material/image/hero_blowup_n1.png"))
             ]
         )
         self.bullets = []
@@ -136,7 +133,7 @@ class OurPlane(pygame.sprite.Sprite):
     def destroy(self, delay):
         global me_destroy_index
         me_down_sound.play()
-        for i in range(4):
+        for i in range(1):
             time.sleep(0.02)
             self.screen.blit(self.destroy_images[i], self.rect)
         self.reset()

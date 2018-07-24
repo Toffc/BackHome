@@ -28,7 +28,7 @@ def main():
 
     #添加主界面类以及界面背景加载
     ui_back = pygame.image.load(os.path.join(
-            BASE_DIR, "material/image/openning.png"))
+            BASE_DIR, "material/image/background.png"))
     ui = Ui(ai_settings, stats)
 
     # 获取我方飞机
@@ -177,7 +177,7 @@ def main():
                 enemy1_down_sound.play()
                 stats.add_score(50)
                 sb.prep_score()
-                for i in range(4):
+                for i in range(2):
                     time.sleep(0.02)
                     ai_settings.screen.blit(
                         each.destroy_images[i], each.rect)
@@ -209,7 +209,7 @@ def main():
                     enemy2_down_sound.play()
                     stats.add_score(100)
                     sb.prep_score()
-                    for i in range(5):
+                    for i in range(2):
                         time.sleep(0.02)
                         ai_settings.screen.blit(
                             each.destroy_images[i], each.rect)
@@ -242,7 +242,7 @@ def main():
                     #更新得分
                     stats.add_score(200)
                     sb.prep_score()
-                    for i in range(7):
+                    for i in range(2):
                         time.sleep(0.02)
                         ai_settings.screen.blit(
                             each.destroy_images[i], each.rect)
