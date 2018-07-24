@@ -30,3 +30,6 @@ class GameStats():
     
     def getTime(self):
         return self.time
+
+    def add_time(self):
+        self.time += 1

@@ -30,7 +30,6 @@ class Scoreboard():
 
     def prep_life(self):
         self.images = []
-        print(self.stats.life)
         for i in range(self.stats.life):
             self.images.append(pygame.image.load("material/image/hero_life.png"))
 

@@ -3,9 +3,7 @@
 
 import sys
 import pygame
-import time
-import random 
-from bin.endless import *
+import time 
 from pygame.locals import *
 from config.settings import *
 from src.plane import OurPlane  # 导入我们的飞机
@@ -18,7 +16,7 @@ from interface.ui import *
 from src.random_bullet import *
 
 
-def main():
+def endless():
     ai_settings = Settings()
     stats = GameStats(ai_settings)
     sb = Scoreboard(ai_settings, stats)
@@ -102,16 +100,6 @@ def main():
     time_counter = 0
 
     '''
-    开始界面
-    '''
-    while running:
-        ai_settings.screen.blit(ai_settings.background, (0, 0))
-        ui.show(ai_settings, stats)
-        if stats.feiji == True:
-            break
-        pygame.display.update()
-
-    '''
     飞机大战
     '''
 
@@ -124,23 +112,17 @@ def main():
         bg1.map_rolling()
         bg2.map_rolling()
 
-        # 飞机装填子弹
-        bullet1 = []
-        for i in range(bullet_num):
-            bullet1.append(our_plane.bullets)
-
         #显示分数、生命、时间
         sb.show_score()
         sb.prep_life()
         sb.show_life()
         sb.prep_time()
-        sb.show_time()
 
         # 计时
         time_counter += 1
         if(time_counter == 50):
             time_counter = 0
-            stats.sub_time()
+            stats.add_time()
             sb.prep_time()
 
         # 微信的飞机貌似是喷气式的, 那么这个就涉及到一个帧数的问题
@@ -182,7 +164,7 @@ def main():
                 each.reset()
 
         #在不同时间段增加敌机类型
-        if stats.getTime() <= 40:
+        if stats.getTime() >= 310:
             for each in mid_enemies:
                 if each.active:
                     # 随机循环输出中飞机敌机
@@ -214,7 +196,7 @@ def main():
                     each.reset()
 
         #在不同时间段增加敌机类型
-        if stats.getTime() <= 20: 
+        if stats.getTime() >= 380: 
             for each in big_enemies:
                 if each.active:
                     # 随机循环输出大飞机敌机
@@ -287,30 +269,17 @@ def main():
         """
         随机添加道具
         """
-
-        if random.randint(0, 200) == 151:
-            for each in props_bullet:
-                each.active == False
-        if random.randint(0, 200)  == 201:
-            for each in props_plane_speed:
-                each.active == False
-        if random.randint(0, 200) == 251:
-            for each in props_plane_add_life:
-                each.active == False
-
-
         for each in props_bullet:
             if each.active:
                 each.move()
                 ai_settings.screen.blit(each.image, each.rect)
-
             else:
                 each.reset()
+
         for each in props_plane_speed:
             if each.active:
                 each.move()
                 ai_settings.screen.blit(each.image, each.rect)
-
             else:
                 each.reset()
 
@@ -318,9 +287,9 @@ def main():
             if each.active:
                 each.move()
                 ai_settings.screen.blit(each.image, each.rect)
-
             else:
                 each.reset()
+        
         
         
         
@@ -353,35 +322,7 @@ def main():
             our_plane.destroy(delay)
             stats.sub_life()
             sb.prep_life()
-            '''# 飞机存活的状态下才可以发射子弹
-            if our_plane.get_Time() == 30:  #限定飞机发射子弹的间隔
-                bullet_sound.play()
-                bullets = bullet1
-                bullets[bullet_index].reset(our_plane.rect.midtop)
-                bullet_index = (bullet_index + 1) % bullet_num
-            our_plane.add_Time()
-
-            for b in bullet1:
-                if b.active:  # 只有激活的子弹才可能击中敌机
-                    b.move()
-                    ai_settings.screen.blit(b.image, b.rect)
-                    enemies_hit = pygame.sprite.spritecollide(b, enemies, False, pygame.sprite.collide_mask)
-                    if enemies_hit:  # 如果子弹击中飞机
-                        b.active = False  # 子弹损毁
-                        for e in enemies_hit:
-                            e.active = e.reduce_energy()  # 小型敌机损毁
-
-        # 毁坏状态绘制爆炸的场面
-        else:
-            me_down_sound.play()
-            for i in range(4):
-                time.sleep(0.02)
-                ai_settings.screen.blit(
-                    our_plane.destroy_images[i], our_plane.rect)
-            stats.sub_life()
-            sb.prep_life()    
-            our_plane.reset()
-'''
+        
         # 调用 pygame 实现的碰撞方法 spritecollide (我方飞机如果和敌机碰撞, 更改飞机的存活属性)
         enemies_down = pygame.sprite.spritecollide(our_plane, enemies, False, pygame.sprite.collide_mask)
         if enemies_down:
@@ -447,6 +388,17 @@ def main():
         # 绘制图像并输出到屏幕上面
         pygame.display.flip()
 
+        if stats.getTime() % 10 == 0 and stats.getTime() <= 350 and time_counter == 49:
+            num_small = 1
+            add_small_enemies(small_enemies, enemies, num_small, ai_settings.bg_size)  # 生成若干敌方小型飞机
+            
 
+        if stats.getTime() % 15 == 0 and stats.getTime() > 350 and stats.getTime() <= 380 and time_counter == 49:
+            num_small -= 1
+            num_mid += 1
+            add_small_enemies(small_enemies, enemies, num_small, ai_settings.bg_size)  # 生成若干敌方小型飞机
+            add_mid_enemies(mid_enemies, enemies, num_mid, ai_settings.bg_size)  # 生成若干敌方小型飞机
 
-
+        if stats.getTime() % 2 == 0 and stats.getTime() > 380 and stats.getTime() <= 400 and time_counter == 49:
+            for s_bullet in small_bullet:
+                sbullet.speed += 2
