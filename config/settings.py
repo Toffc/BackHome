@@ -22,7 +22,7 @@ class Settings():
         self.color_green = (0, 255, 0)
         self.color_red = (255, 0, 0)
         self.color_white = (255, 255, 255)
-        self.bg_color = (200, 200, 200)
+        self.bg_color = (0, 0, 0)
 
 class MyMap(pygame.sprite.Sprite):
     

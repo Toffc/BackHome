@@ -9,7 +9,7 @@ class Scoreboard():
         self.ai_settings = ai_settings
         self.stats = stats
 
-        self.text_color = (30, 30, 30)
+        self.text_color = (255, 255, 255)
         self.font = pygame.font.SysFont(None, 48)
 
         self.prep_score()
@@ -33,7 +33,7 @@ class Scoreboard():
         for i in range(self.stats.life):
             self.images.append(pygame.image.load("material/image/hero_life.png"))
 
-        self.life_rect = self.images[0].get_rect()
+        self.life_rect = pygame.image.load("material/image/hero_life.png").get_rect()
         self.life_rect.right = self.screen_rect.right + 20
         self.life_rect.top = 540
 
