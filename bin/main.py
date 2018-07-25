@@ -15,6 +15,7 @@ from src.scoreboard import *
 from src.bullet import *
 from src.props import *
 from interface.ui import *
+from interface.running_ui import *
 from interface.function import *
 from src.random_bullet import *
 
@@ -31,6 +32,9 @@ def main():
     ui_back = pygame.image.load(os.path.join(
             BASE_DIR, "material/image/background.png"))
     ui = Ui(ai_settings, stats)
+
+    #添加暂停类
+    plane_ui = Running(ai_settings, stats)
 
     # 获取我方飞机
     our_plane = OurPlane(ai_settings.bg_size, ai_settings.screen)
@@ -145,6 +149,9 @@ def main():
         if stats.mode == 2:
             endless()
         elif stats.mode == 1:
+            if stats.pause == True:
+                continue
+
             #初始化
             enemies = pygame.sprite.Group()  # 生成敌方飞机组(一种精灵组用以存储所有敌机精灵)
             small_enemies = pygame.sprite.Group()  # 敌方小型飞机组(不同型号敌机创建不同的精灵组来存储)
@@ -211,6 +218,20 @@ def main():
             
             
             while flag:
+
+                # 响应用户的操作
+                for event in pygame.event.get():
+                    if event.type == 12:  # 如果用户按下屏幕上的关闭按钮，触发QUIT事件，程序退出
+                        pygame.quit()
+                        sys.exit()
+                    elif event.type == pygame.MOUSEBUTTONDOWN and plane_ui.button_stop.isCover() and stats.pause == True:
+                        stats.pause = False
+                    elif event.type == pygame.MOUSEBUTTONDOWN and plane_ui.button_stop.isCover() and stats.pause == False:
+                        stats.pause = True
+
+                if stats.pause == True:
+                    continue
+
                 # 绘制背景图
                 #ai_settings.screen.blit(ai_settings.background, (0, 0))
                 bg1.map_update(ai_settings.screen)
@@ -218,6 +239,8 @@ def main():
                 bg1.map_rolling()
                 bg2.map_rolling()
                 
+                #show pause button
+                plane_ui.show(ai_settings, stats)
 
                 # 飞机装填子弹
                 bullet1 = []
@@ -472,13 +495,6 @@ def main():
         '''
 
 
-
-                # 响应用户的操作
-                for event in pygame.event.get():
-                    if event.type == 12:  # 如果用户按下屏幕上的关闭按钮，触发QUIT事件，程序退出
-                        pygame.quit()
-                        sys.exit()
-
                 if delay == 0:
                     delay = 60
                 delay -= 1
@@ -552,5 +568,6 @@ def main():
                         flag = 0
                         stats.function = 0
                         stats.mode = 0
+                        stats.pause = False
                 # 绘制图像并输出到屏幕上面
                 pygame.display.update()
