@@ -18,10 +18,14 @@ class Running():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
-            elif event.type == pygame.MOUSEBUTTONDOWN and self.button_stop.isCover():
+            elif event.type == pygame.MOUSEBUTTONDOWN and self.button_stop.isCover() and stats.pause == False:
                 stats.pause = True
-            elif event.type == pygame.MOUSEBUTTONDOWN and self.button_continue.isCover():
+            elif event.type == pygame.MOUSEBUTTONDOWN and self.button_continue.isCover() and stats.pause == True:
                 stats.pause = False
+            elif event.type == pygame.MOUSEBUTTONDOWN and self.button_stop.isCover() and stats.pause == True:
+                stats.pause = False
+            elif event.type == pygame.MOUSEBUTTONDOWN and self.button_continue.isCover() and stats.pause == False:
+                stats.pause = True
 
 
 
