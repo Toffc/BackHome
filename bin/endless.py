@@ -157,7 +157,7 @@ def endless():
                 enemy1_down_sound.play()
                 stats.add_score(50)
                 sb.prep_score()
-                for i in range(4):
+                for i in range(2):
                     time.sleep(0.02)
                     ai_settings.screen.blit(
                         each.destroy_images[i], each.rect)
@@ -189,7 +189,7 @@ def endless():
                     enemy2_down_sound.play()
                     stats.add_score(100)
                     sb.prep_score()
-                    for i in range(5):
+                    for i in range(2):
                         time.sleep(0.02)
                         ai_settings.screen.blit(
                             each.destroy_images[i], each.rect)
@@ -222,7 +222,7 @@ def endless():
                     #更新得分
                     stats.add_score(200)
                     sb.prep_score()
-                    for i in range(7):
+                    for i in range(2):
                         time.sleep(0.02)
                         ai_settings.screen.blit(
                             each.destroy_images[i], each.rect)

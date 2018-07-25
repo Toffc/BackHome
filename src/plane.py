@@ -119,7 +119,7 @@ class OurPlane(pygame.sprite.Sprite):
         if switch_image:
             self.screen.blit(self.image_one, self.rect)
         else:
-            self.screen.blit(self.image_two, self.rect);
+            self.screen.blit(self.image_two, self.rect)
 
     def fire(self, enemies):
         if self.time == 30:  #限定飞机发射子弹的间隔
@@ -128,7 +128,7 @@ class OurPlane(pygame.sprite.Sprite):
             self.bullet1[self.bullet_index].reset(self.rect.midtop)
             self.bullet_index = (self.bullet_index + 1) % self.bullet_num
         self.add_Time()
-        return self.bullet1;
+        return self.bullet1
 
     def destroy(self, delay):
         global me_destroy_index
