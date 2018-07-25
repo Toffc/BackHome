@@ -9,6 +9,10 @@ class GameStats():
         self.mode = 0 
         self.mute = False
 
+    def reset_menu(self):
+        self.mode = 0 
+        self.mute = False
+
     def reset_stats(self):
         self.score = 0
         self.time = 60

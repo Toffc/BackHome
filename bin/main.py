@@ -112,8 +112,9 @@ def main():
         ai_settings.screen.blit(ui_back, (0, 0))
         ui.show(ai_settings, stats)
         if stats.function == 1:
-            break
-            # f1(ai_settings, ui_back, stats)
+            f1(ai_settings, ui_back, stats)
+            if stats.mode != 0:
+                break
         elif stats.function == 2:
             f2(ai_settings, ui_back, stats)
         elif stats.function == 3:
@@ -122,4 +123,12 @@ def main():
             f4(ai_settings, ui_back, stats)
         pygame.display.update()
     
-    
+
+
+    '''
+    游戏界面
+    '''
+    if stats.mode == 2:
+        endless()
+    elif stats.mode == 1:
+        endless()

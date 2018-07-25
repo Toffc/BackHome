@@ -3,13 +3,47 @@ from config.settings import *
 import pygame
 
 def f1(ai_settings, ui_back, stats):
-    print()
+    button_nml = Button('material/image/normal.png', 'material/image/normal_down.png', ai_settings.screen, (125,80))
+    button_inf = Button('material/image/infinite.png', 'material/image/infinite_down.png', ai_settings.screen, (270,80))
+    
+    route = 'material/image/mode_choose.png'
+    
+    while 1:
+        pygame.display.update()
+        ai_settings.screen.blit(ui_back, (0, 0))
+        ai_settings.screen.blit(pygame.image.load(route), (50,50))
+
+        button_nml.show()
+        button_inf.show()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN and button_nml.isCover():
+                stats.mode = 1
+                break
+            elif event.type == pygame.MOUSEBUTTONDOWN and button_inf.isCover():
+                stats.mode = 2
+                break
+            elif button_nml.isCover():
+                route = 'material/image/normal_mode.png'
+                continue
+            elif button_inf.isCover():
+                route = 'material/image/infinite_mode.png'
+                continue
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                stats.function = 0
+
+        if stats.function == 0 or stats.mode != 0:
+            break
+
 
 def f2(ai_settings, ui_back, stats):
     while 1:
         pygame.display.update()
         ai_settings.screen.blit(ui_back, (0, 0))
-        ai_settings.screen.blit(pygame.image.load('material/image/rankboard.png'), (100,200))
+        ai_settings.screen.blit(pygame.image.load('material/image/rankboard.png'), (50,50))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
