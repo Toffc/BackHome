@@ -13,6 +13,7 @@ from src.scoreboard import *
 from src.bullet import *
 from src.props import *
 from interface.ui import *
+from interface.running_ui import *
 from src.random_bullet import *
 
 
@@ -24,8 +25,8 @@ def endless():
     bg1 = MyMap(0,0, ai_settings.background, 600)
     bg2 = MyMap(0,600, ai_settings.background, 600)
 
-    #添加主界面类
-    ui = Ui(ai_settings, stats)
+    #添加暂停类
+    plane_ui = Running(ai_settings, stats)
 
     # 获取我方飞机
     our_plane = OurPlane(ai_settings.bg_size, ai_settings.screen)
@@ -105,12 +106,28 @@ def endless():
 
     while running:
 
+        # 响应用户的操作
+        for event in pygame.event.get():
+            if event.type == 12:  # 如果用户按下屏幕上的关闭按钮，触发QUIT事件，程序退出
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN and plane_ui.button_stop.isCover() and stats.pause == True:
+                stats.pause = False
+            elif event.type == pygame.MOUSEBUTTONDOWN and plane_ui.button_stop.isCover() and stats.pause == False:
+                stats.pause = True
+
+        if stats.pause == True:
+            continue
+
         # 绘制背景图
         #ai_settings.screen.blit(ai_settings.background, (0, 0))
         bg1.map_update(ai_settings.screen)
         bg2.map_update(ai_settings.screen)
         bg1.map_rolling()
         bg2.map_rolling()
+
+        #show pause button
+        plane_ui.show(ai_settings, stats)
 
         #显示分数、生命、时间
         sb.show_score()
@@ -362,13 +379,6 @@ def endless():
                     hit_plane = False
             if hit_plane:
                 our_plane.active = False  # 飞机损毁
-
-
-        # 响应用户的操作
-        for event in pygame.event.get():
-            if event.type == 12:  # 如果用户按下屏幕上的关闭按钮，触发QUIT事件，程序退出
-                pygame.quit()
-                sys.exit()
 
         if delay == 0:
             delay = 60

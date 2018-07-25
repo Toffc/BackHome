@@ -149,8 +149,6 @@ def main():
         if stats.mode == 2:
             endless()
         elif stats.mode == 1:
-            if stats.pause == True:
-                continue
 
             #初始化
             enemies = pygame.sprite.Group()  # 生成敌方飞机组(一种精灵组用以存储所有敌机精灵)
