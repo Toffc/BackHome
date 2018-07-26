@@ -42,11 +42,14 @@ def main():
     pygame.mixer.music.play(-1)  # loops 接收该参数, -1 表示无限循环(默认循环播放一次)
     running = True
     switch_image = False  # 切换飞机的标识位(使飞机具有喷气式效果)
+    
     delay = 60  # 对一些效果进行延迟, 效果更好一些
     num_small = 6
     num_mid = 3
     num_big = 2
 
+
+    #初始化
     enemies = pygame.sprite.Group()  # 生成敌方飞机组(一种精灵组用以存储所有敌机精灵)
     small_enemies = pygame.sprite.Group()  # 敌方小型飞机组(不同型号敌机创建不同的精灵组来存储)
     mid_enemies = pygame.sprite.Group()  # 敌方中型飞机组(不同型号敌机创建不同的精灵组来存储)
@@ -58,14 +61,14 @@ def main():
     props_plane_speed = pygame.sprite.Group()
     props_plane_add_life = pygame.sprite.Group()
 
-    
+            
 
     #生成道具
     add_props_bullet(props_bullet, props, 1, ai_settings.bg_size)
     add_props_plane_speed(props_plane_speed, props, 1, ai_settings.bg_size)
     add_props_plane_add_life(props_plane_add_life, props, 1, ai_settings.bg_size)
 
-    
+            
     #生成敌机
     add_small_enemies(small_enemies, enemies, num_small, ai_settings.bg_size)  # 生成若干敌方小型飞机
     add_mid_enemies(mid_enemies, enemies, num_mid, ai_settings.bg_size)  # 生成若干敌方小型飞机
@@ -152,31 +155,6 @@ def main():
             stats.function = 0
             stats.mode = 0
         elif stats.mode == 1:
-
-            #初始化
-            enemies = pygame.sprite.Group()  # 生成敌方飞机组(一种精灵组用以存储所有敌机精灵)
-            small_enemies = pygame.sprite.Group()  # 敌方小型飞机组(不同型号敌机创建不同的精灵组来存储)
-            mid_enemies = pygame.sprite.Group()  # 敌方中型飞机组(不同型号敌机创建不同的精灵组来存储)
-            big_enemies = pygame.sprite.Group()  # 敌方大型飞机组(不同型号敌机创建不同的精灵组来存储)
-
-            #生成道具组
-            props = pygame.sprite.Group()
-            props_bullet = pygame.sprite.Group()
-            props_plane_speed = pygame.sprite.Group()
-            props_plane_add_life = pygame.sprite.Group()
-
-            
-
-            #生成道具
-            add_props_bullet(props_bullet, props, 1, ai_settings.bg_size)
-            add_props_plane_speed(props_plane_speed, props, 1, ai_settings.bg_size)
-            add_props_plane_add_life(props_plane_add_life, props, 1, ai_settings.bg_size)
-
-            
-            #生成敌机
-            add_small_enemies(small_enemies, enemies, num_small, ai_settings.bg_size)  # 生成若干敌方小型飞机
-            add_mid_enemies(mid_enemies, enemies, num_mid, ai_settings.bg_size)  # 生成若干敌方小型飞机
-            add_big_enemies(big_enemies, enemies, num_big, ai_settings.bg_size)  # 生成若干敌方小型飞机
 
             # 定义各种子弹索引
             bullet_index = 0
