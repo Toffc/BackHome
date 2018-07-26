@@ -9,10 +9,12 @@ class GameStats():
         self.mode = 0 
         self.mute = False
         self.pause = False
+        self.back_menu = False
 
     def reset_menu(self):
         self.mode = 0 
         self.mute = False
+        self.back_menu = False
 
     def reset_stats(self):
         self.score = 0

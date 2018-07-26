@@ -115,7 +115,11 @@ def endless():
                 stats.pause = False
             elif event.type == pygame.MOUSEBUTTONDOWN and plane_ui.button_stop.isCover() and stats.pause == False:
                 stats.pause = True
+            elif event.type == pygame.MOUSEBUTTONDOWN and plane_ui.button_back_menu.isCover() and stats.back_menu == False:
+                stats.back_menu = True
 
+        if stats.back_menu == True:
+            return
         if stats.pause == True:
             continue
 
@@ -129,10 +133,8 @@ def endless():
         #show pause button
         plane_ui.show(ai_settings, stats)
 
-        #显示分数、生命、时间
+        #显示分数、时间
         sb.show_score()
-        sb.prep_life()
-        sb.show_life()
         sb.prep_time()
 
         # 计时
@@ -300,12 +302,7 @@ def endless():
             else:
                 each.reset()
 
-        for each in props_plane_add_life:
-            if each.active:
-                each.move()
-                ai_settings.screen.blit(each.image, each.rect)
-            else:
-                each.reset()
+
         
         
         
@@ -412,3 +409,9 @@ def endless():
         if stats.getTime() % 2 == 0 and stats.getTime() > 380 and stats.getTime() <= 400 and time_counter == 49:
             for s_bullet in small_bullet:
                 sbullet.speed += 2
+
+        if stats.pause == True:
+            sb.show_end()
+            key = pygame.key.get_pressed()
+            if key[K_q]:
+                return

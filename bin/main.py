@@ -148,6 +148,9 @@ def main():
         '''
         if stats.mode == 2:
             endless()
+            flag = 0
+            stats.function = 0
+            stats.mode = 0
         elif stats.mode == 1:
 
             #初始化
@@ -226,7 +229,14 @@ def main():
                         stats.pause = False
                     elif event.type == pygame.MOUSEBUTTONDOWN and plane_ui.button_stop.isCover() and stats.pause == False:
                         stats.pause = True
+                    elif event.type == pygame.MOUSEBUTTONDOWN and plane_ui.button_back_menu.isCover() and stats.back_menu == False:
+                        stats.back_menu = True
 
+                if stats.back_menu == True:
+                    flag = 0
+                    stats.function = 0
+                    stats.mode = 0
+                    stats.back_menu = False
                 if stats.pause == True:
                     continue
 
